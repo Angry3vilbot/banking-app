@@ -1,7 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
-public class Login extends JPanel {
+public class Login extends Api{
     JLabel loginLabel;
     JLabel passLabel;
     JPasswordField passField;
@@ -11,7 +14,7 @@ public class Login extends JPanel {
     Login() {
         GridBagLayout grid = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
-        loginLabel = new JLabel("Name/Card Number");
+        loginLabel = new JLabel("Card Number");
         passLabel = new JLabel("Password");
         passField = new JPasswordField();
         loginField = new JTextField();
@@ -19,6 +22,7 @@ public class Login extends JPanel {
 
         loginField.setColumns(15);
         passField.setColumns(15);
+        submitBtn.addActionListener(this::loginBtnHandler);
         this.setLayout(grid);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -44,5 +48,15 @@ public class Login extends JPanel {
         gbc.gridy = 2;
         gbc.gridwidth = 2;
         this.add(submitBtn, gbc);
+    }
+
+    private void loginBtnHandler(ActionEvent e) {
+        try {
+            String result = authenticate(loginField.getText(), passField.getPassword());
+            JOptionPane.showMessageDialog(null, result);
+            System.out.println(result);
+        } catch (SQLException exception) {
+            // Handle the exception
+        }
     }
 }
