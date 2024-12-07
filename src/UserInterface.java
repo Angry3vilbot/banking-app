@@ -20,6 +20,6 @@ public class UserInterface extends JFrame {
 //        cPane.add("jars", jars);
 //        cPane.add("settings", settings);
         cPane.add(new Login());
-        this.setIconImage(new ImageIcon(getClass().getResource("icon.png")).getImage());
+        this.setIconImage(new ImageIcon(getClass().getResource("assets/icon.png")).getImage());
     }
 }

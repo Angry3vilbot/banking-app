@@ -1,4 +1,3 @@
-import javax.smartcardio.Card;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -7,9 +6,9 @@ import java.awt.event.ActionListener;
 public class Navigation extends JPanel{
     JButton homeBtn, jarsBtn, settingsBtn;
     Navigation() {
-        homeBtn = new JButton("Home", new ImageIcon(getClass().getResource("home.png")));
-        jarsBtn = new JButton("Jars", new ImageIcon(getClass().getResource("jars.png")));
-        settingsBtn = new JButton("Settings", new ImageIcon(getClass().getResource("settings.png")));
+        homeBtn = new JButton("Home", new ImageIcon(getClass().getResource("assets/home.png")));
+        jarsBtn = new JButton("Jars", new ImageIcon(getClass().getResource("assets/jars.png")));
+        settingsBtn = new JButton("Settings", new ImageIcon(getClass().getResource("assets/settings.png")));
 
         Dimension btnSize = new Dimension(200, 60);
         homeBtn.setPreferredSize(btnSize);
