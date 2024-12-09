@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
 public class Login extends Api{
@@ -52,9 +51,13 @@ public class Login extends Api{
 
     private void loginBtnHandler(ActionEvent e) {
         try {
-            String result = authenticate(loginField.getText(), passField.getPassword());
-            JOptionPane.showMessageDialog(null, result);
-            System.out.println(result);
+            authenticate(loginField.getText(), passField.getPassword());
+            CardLayout layout = (CardLayout) getParent().getLayout();
+            layout.next(getParent());
+            layout.show(getParent(), "main");
+            // Get the Main component
+            Main mainPanel = (Main) getParent().getComponent(1);
+            mainPanel.updateUI();
         } catch (SQLException exception) {
             // Handle the exception
         }
