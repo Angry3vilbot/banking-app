@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   fill="#000000"
+   version="1.1"
+   id="Capa_1"
+   width="50"
+   height="50"
+   viewBox="0 0 21.814375 21.814438"
+   xml:space="preserve"
+   sodipodi:docname="deposit.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs9" /><sodipodi:namedview
+   id="namedview7"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showgrid="false"
+   inkscape:zoom="1.005"
+   inkscape:cx="400.49751"
+   inkscape:cy="161.69154"
+   inkscape:window-width="1920"
+   inkscape:window-height="991"
+   inkscape:window-x="-9"
+   inkscape:window-y="-9"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Capa_1" />
+<g
+   id="g4"
+   transform="matrix(0.06250018,0,0,0.06250018,-5e-4,0)">
+	<path
+   d="m 349.03,141.226 v 66.579 c 0,5.012 -4.061,9.079 -9.079,9.079 H 216.884 v 123.067 c 0,5.019 -4.067,9.079 -9.079,9.079 h -66.579 c -5.009,0 -9.079,-4.061 -9.079,-9.079 V 216.884 H 9.079 C 4.063,216.884 0,212.817 0,207.805 v -66.579 c 0,-5.013 4.063,-9.079 9.079,-9.079 H 132.147 V 9.079 C 132.147,4.061 136.216,0 141.226,0 h 66.579 c 5.012,0 9.079,4.061 9.079,9.079 v 123.068 h 123.067 c 5.019,0 9.079,4.066 9.079,9.079 z"
+   id="path2" />
+</g>
+</svg>

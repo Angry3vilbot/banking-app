@@ -56,7 +56,7 @@ public class Login extends Api{
             layout.next(getParent());
             layout.show(getParent(), "main");
             // Get the Main component
-            Main mainPanel = (Main) getParent().getComponent(1);
+            Main mainPanel = (Main) getParent().getComponent(3);
             mainPanel.updateUI();
         } catch (SQLException exception) {
             // Handle the exception
