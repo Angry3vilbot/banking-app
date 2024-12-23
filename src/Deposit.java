@@ -2,6 +2,8 @@ import javax.smartcardio.Card;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.math.BigDecimal;
+import java.sql.SQLException;
 
 public class Deposit extends Api {
     JRadioButton freeMoney;
@@ -33,44 +35,101 @@ public class Deposit extends Api {
         radioContainer.add(fromCard);
         paymentMethod.add(freeMoney);
         paymentMethod.add(fromCard);
+        freeMoney.setSelected(true);
         paymentInfo.setColumns(15);
         depositAmount.setColumns(15);
         submitBtn.addActionListener(this::submitBtnHandler);
         cancelBtn.addActionListener(this::cancelBtnHandler);
         this.setLayout(grid);
 
+        // Radio button container
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         this.add(radioContainer, gbc);
 
+        // Payment Info Label
         gbc.gridwidth = 1;
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.insets = new Insets(0, 0, 10, 10);
         this.add(paymentInfoLabel, gbc);
 
+        // Payment Info Field
         gbc.gridx = 1;
         this.add(paymentInfo, gbc);
 
+        // Deposit Amount Label
         gbc.gridx = 0;
         gbc.gridy = 2;
         this.add(depositAmountLabel, gbc);
 
+        // Deposit Amount Field
         gbc.gridx = 1;
         this.add(depositAmount, gbc);
 
+        // Cancel Button
         gbc.gridx = 0;
         gbc.gridy = 3;
         this.add(cancelBtn, gbc);
 
+        // Submit Button
         gbc.gridx = 1;
         this.add(submitBtn, gbc);
     }
 
     private void submitBtnHandler(ActionEvent e) {
+        try {
+            BigDecimal paymentInfoData;
+            Double depositAmountData;
 
+            System.out.println(paymentInfo.getText().matches("[0-9]{16}"));
+            // Validate paymentInfo if card number is selected
+            if(paymentInfo.getText().matches("[0-9]{16}") && paymentMethod.getSelection() == freeMoney.getModel()) {
+                if(!new BigDecimal(paymentInfo.getText()).equals(UserSession.getInstance().getUser().getCardnumber())) {
+                    paymentInfoData = new BigDecimal(paymentInfo.getText());
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Error: You can't ask yourself for money", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Error: Payment Info must be consist of 16 numbers", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            //Validate depositAmount
+            System.out.println(depositAmount.getText().matches("[0-9]+[.]?[0-9]*"));
+            if(depositAmount.getText().matches("[0-9]+[.]?[0-9]*") && !depositAmount.getText().equals("0")) {
+                depositAmountData = Double.parseDouble(depositAmount.getText());
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Error: Deposit amount must be larger than 0 and of format 123.321 or 123", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Free Money is selected
+            if(paymentMethod.getSelection() == freeMoney.getModel()) {
+                deposit(depositAmountData);
+            }
+            // Card Number is selected
+            else {
+                deposit(paymentInfoData, depositAmountData);
+            }
+        } catch (SQLException exception) {
+            JOptionPane.showMessageDialog(null, exception.getMessage() + "\n" + exception.getCause());
+        } finally {
+            // Revert everything to initial values
+            paymentMethod.clearSelection();
+            paymentMethod.setSelected(freeMoney.getModel(), true);
+            paymentInfo.setText("");
+            depositAmount.setText("");
+            // Switch card back to Main
+            CardLayout layout = (CardLayout) getParent().getLayout();
+            layout.show(getParent(), "main");
+        }
     }
 
     private void cancelBtnHandler(ActionEvent e) {
