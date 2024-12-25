@@ -81,27 +81,27 @@ public class Deposit extends Api {
 
     private void submitBtnHandler(ActionEvent e) {
         try {
-            BigDecimal paymentInfoData;
+            BigDecimal paymentInfoData = new BigDecimal(1);
             Double depositAmountData;
 
-            System.out.println(paymentInfo.getText().matches("[0-9]{16}"));
             // Validate paymentInfo if card number is selected
-            if(paymentInfo.getText().matches("[0-9]{16}") && paymentMethod.getSelection() == freeMoney.getModel()) {
-                if(!new BigDecimal(paymentInfo.getText()).equals(UserSession.getInstance().getUser().getCardnumber())) {
-                    paymentInfoData = new BigDecimal(paymentInfo.getText());
+            if (paymentMethod.getSelection() == fromCard.getModel()) {
+                if(paymentInfo.getText().matches("[0-9]{16}")) {
+                    if(!new BigDecimal(paymentInfo.getText()).equals(UserSession.getInstance().getUser().getCardnumber())) {
+                        paymentInfoData = new BigDecimal(paymentInfo.getText());
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "Error: You can't ask yourself for money", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
                 }
                 else {
-                    JOptionPane.showMessageDialog(null, "Error: You can't ask yourself for money", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error: Payment Info must be consist of 16 numbers", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
-            else {
-                JOptionPane.showMessageDialog(null, "Error: Payment Info must be consist of 16 numbers", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
 
             //Validate depositAmount
-            System.out.println(depositAmount.getText().matches("[0-9]+[.]?[0-9]*"));
             if(depositAmount.getText().matches("[0-9]+[.]?[0-9]*") && !depositAmount.getText().equals("0")) {
                 depositAmountData = Double.parseDouble(depositAmount.getText());
             }
@@ -121,11 +121,20 @@ public class Deposit extends Api {
         } catch (SQLException exception) {
             JOptionPane.showMessageDialog(null, exception.getMessage() + "\n" + exception.getCause());
         } finally {
+            // Update the user information
+            try {
+                update();
+            } catch (SQLException exception) {
+                JOptionPane.showMessageDialog(null, exception.getMessage() + "\n" + exception.getCause());
+            }
             // Revert everything to initial values
             paymentMethod.clearSelection();
             paymentMethod.setSelected(freeMoney.getModel(), true);
             paymentInfo.setText("");
             depositAmount.setText("");
+            // Update the UI of Main
+            Main main = (Main) getParent().getComponent(3);
+            main.updateUI();
             // Switch card back to Main
             CardLayout layout = (CardLayout) getParent().getLayout();
             layout.show(getParent(), "main");

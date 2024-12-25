@@ -86,4 +86,22 @@ public class Api extends JPanel {
         pstat.close();
         connection.close();
     }
+
+    // Update data about the user
+    void update() throws SQLException{
+        // Establish a connection
+        connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
+        // Get the current user
+        pstat = connection.prepareStatement("SELECT * FROM \"user\" WHERE cardnumber=?");
+        pstat.setBigDecimal(1, UserSession.getInstance().getUser().getCardnumber());
+        ResultSet resSet = pstat.executeQuery();
+        resSet.next();
+        // Create a new User instance to be stored in the UserSession
+        User user = new User(new BigDecimal(resSet.getString(1)), resSet.getString(2),
+                resSet.getDouble(3), (BigDecimal[])resSet.getArray(4).getArray());
+        // Store the user in the UserSession
+        UserSession.getInstance().setUser(user);
+        pstat.close();
+        connection.close();
+    }
 }

@@ -122,6 +122,7 @@ public class Main extends JPanel {
         layout.show(getParent(), "deposit");
     }
     private void send(ActionEvent e) {
-
+        CardLayout layout = (CardLayout) getParent().getLayout();
+        layout.show(getParent(), "send");
     }
 }
