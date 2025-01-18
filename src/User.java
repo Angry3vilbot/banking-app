@@ -5,12 +5,18 @@ public class User {
     private String name;
     private double balance;
     private BigDecimal[] jars;
+    private BigDecimal[] transactionIds;
+    private BigDecimal[] requests;
+    private Transaction[] transactions;
 
-    public User(BigDecimal cardnumber, String name, double balance, BigDecimal[] jars) {
+    public User(BigDecimal cardnumber, String name, double balance, BigDecimal[] jars, BigDecimal[] transactionIds, BigDecimal[] requests, Transaction[] transactions) {
         this.cardnumber = cardnumber;
         this.name = name;
         this.balance = balance;
         this.jars = jars;
+        this.transactionIds = transactionIds;
+        this.requests = requests;
+        this.transactions = transactions;
     }
 
     public BigDecimal getCardnumber() {
@@ -27,5 +33,13 @@ public class User {
 
     public BigDecimal[] getJars() {
         return jars;
+    }
+
+    public Transaction[] getTransactions() {
+        return transactions;
+    }
+
+    public BigDecimal[] getRequests() {
+        return requests;
     }
 }

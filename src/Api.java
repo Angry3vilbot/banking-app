@@ -30,9 +30,30 @@ public class Api extends JPanel {
         pstat.clearParameters();
         // Override the password array for safety
         Arrays.fill(password, ' ');
+        // Check if there are no transactions/deposit requests
+        BigDecimal[] transactionIds = {};
+        BigDecimal[] requests = {};
+        Transaction[] transactions = {};
+        if(resSet.getArray(6) != null) {
+            transactionIds = (BigDecimal[])resSet.getArray(6).getArray();
+            // Order the transaction ids from newest to oldest
+            for (int i = 0; i < transactionIds.length / 2; i++) {
+                BigDecimal temp = transactionIds[i];
+                transactionIds[i] = transactionIds[transactionIds.length - 1 - i];
+                transactionIds[transactionIds.length - 1 - i] = temp;
+            }
+            transactions = new Transaction[transactionIds.length];
+            for (int i = 0; i < transactionIds.length; i++) {
+                transactions[i] = getTransactionData(transactionIds[i].intValue());
+            }
+        }
+        if(resSet.getArray(7) != null) {
+            requests = (BigDecimal[])resSet.getArray(7).getArray();
+        }
+
         // Create a new User instance to be stored in the UserSession
         User user = new User(new BigDecimal(resSet.getString(1)), resSet.getString(2),
-                resSet.getDouble(3), (BigDecimal[])resSet.getArray(4).getArray());
+                resSet.getDouble(3), (BigDecimal[])resSet.getArray(4).getArray(), transactionIds, requests, transactions);
         // Store the user in the UserSession
         UserSession.getInstance().setUser(user);
         pstat.close();
@@ -86,6 +107,24 @@ public class Api extends JPanel {
         pstat.close();
         connection.close();
     }
+    Transaction getTransactionData(int id) throws SQLException {
+        Transaction transaction;
+        // Establish a connection
+        connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
+        // Get the transaction with the specified ID
+        pstat = connection.prepareStatement("SELECT * FROM \"transaction\" WHERE id=?");
+        pstat.setInt(1, id);
+        ResultSet resSet = pstat.executeQuery();
+        resSet.next();
+        // Create the Transaction object and return it
+        transaction = new Transaction(resSet.getInt(1), resSet.getDouble(2), resSet.getString(3),
+                resSet.getString(4), resSet.getString(5), resSet.getString(6));
+        return transaction;
+    }
+
+    void fulfillDepositRequest() throws SQLException {
+
+    };
 
     // Update data about the user
     void update() throws SQLException{
@@ -96,9 +135,30 @@ public class Api extends JPanel {
         pstat.setBigDecimal(1, UserSession.getInstance().getUser().getCardnumber());
         ResultSet resSet = pstat.executeQuery();
         resSet.next();
+        // Check if there are no transactions/deposit requests
+        BigDecimal[] transactionIds = {};
+        BigDecimal[] requests = {};
+        Transaction[] transactions = {};
+        if(resSet.getArray(6) != null) {
+            transactionIds = (BigDecimal[])resSet.getArray(6).getArray();
+            // Order the transaction ids from newest to oldest
+            for (int i = 0; i < transactionIds.length / 2; i++) {
+                BigDecimal temp = transactionIds[i];
+                transactionIds[i] = transactionIds[transactionIds.length - 1 - i];
+                transactionIds[transactionIds.length - 1 - i] = temp;
+            }
+            transactions = new Transaction[transactionIds.length];
+            for (int i = 0; i < transactionIds.length; i++) {
+                transactions[i] = getTransactionData(transactionIds[i].intValue());
+            }
+        }
+        if(resSet.getArray(7) != null) {
+            requests = (BigDecimal[])resSet.getArray(7).getArray();
+        }
         // Create a new User instance to be stored in the UserSession
         User user = new User(new BigDecimal(resSet.getString(1)), resSet.getString(2),
-                resSet.getDouble(3), (BigDecimal[])resSet.getArray(4).getArray());
+                resSet.getDouble(3), (BigDecimal[])resSet.getArray(4).getArray(),
+                transactionIds, requests, transactions);
         // Store the user in the UserSession
         UserSession.getInstance().setUser(user);
         pstat.close();
