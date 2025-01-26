@@ -1,8 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.sql.SQLException;
 
-public class Main extends JPanel {
+public class Main extends Api {
     GridBagConstraints gbc;
     JLabel name;
     JLabel balance;
@@ -29,6 +30,26 @@ public class Main extends JPanel {
             name.setFont(new Font("Dialog", Font.BOLD, 32));
             balance = new JLabel(currentUser.getBalance() + " €", SwingConstants.CENTER);
             balance.setFont(new Font("Dialog", Font.BOLD, 32));
+            //Display a dialog box for each Deposit Request the user has
+            for (int i = 0; i < currentUser.getRequests().length; i++) {
+                DepositRequest request = currentUser.getRequests()[i];
+                String message = request.getName() + " (" + request.getTarget() + ") is requesting " + request.getAmount() + " € from your account.";
+                int result = JOptionPane.showConfirmDialog(this, message, "Deposit Request", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                if(result == JOptionPane.YES_OPTION) {
+                    try{
+                        fulfillDepositRequest(request.getId());
+                    } catch (SQLException exception) {
+                        JOptionPane.showMessageDialog(this, "Error fulfilling request: " + exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+                else {
+                    try{
+                        deleteDepositRequest(request.getId());
+                    } catch (SQLException exception) {
+                        JOptionPane.showMessageDialog(null, "Error: " + exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
 
             // Name
             gbc.gridx = 0;
@@ -111,6 +132,7 @@ public class Main extends JPanel {
             if(transactionsScroll != null) {
                 this.remove(transactionsScroll);
             }
+
             name = new JLabel(currentUser.getName(), SwingConstants.LEFT);
             name.setFont(new Font("Dialog", Font.BOLD, 32));
             balance = new JLabel(currentUser.getBalance() + " €", SwingConstants.CENTER);
@@ -144,6 +166,26 @@ public class Main extends JPanel {
             gbc.fill = GridBagConstraints.NONE;
             gbc.anchor = GridBagConstraints.CENTER;
             this.add(transactionsScroll, gbc);
+            //Display a dialog box for each Deposit Request the user has
+            for (int i = 0; i < currentUser.getRequests().length; i++) {
+                DepositRequest request = currentUser.getRequests()[i];
+                String message = request.getName() + " (" + request.getTarget() + ") is requesting " + request.getAmount() + " € from your account.";
+                int result = JOptionPane.showConfirmDialog(this, message, "Deposit Request", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                if(result == JOptionPane.YES_OPTION) {
+                    try{
+                        fulfillDepositRequest(request.getId());
+                    } catch (SQLException exception) {
+                        JOptionPane.showMessageDialog(this, "Error fulfilling request: " + exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+                else {
+                    try{
+                        deleteDepositRequest(request.getId());
+                    } catch (SQLException exception) {
+                        JOptionPane.showMessageDialog(null, "Error: " + exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
         }
         this.revalidate();
         this.repaint();

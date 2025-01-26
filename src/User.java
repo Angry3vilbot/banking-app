@@ -6,10 +6,10 @@ public class User {
     private double balance;
     private BigDecimal[] jars;
     private BigDecimal[] transactionIds;
-    private BigDecimal[] requests;
+    private DepositRequest[] requests;
     private Transaction[] transactions;
 
-    public User(BigDecimal cardnumber, String name, double balance, BigDecimal[] jars, BigDecimal[] transactionIds, BigDecimal[] requests, Transaction[] transactions) {
+    public User(BigDecimal cardnumber, String name, double balance, BigDecimal[] jars, BigDecimal[] transactionIds, DepositRequest[] requests, Transaction[] transactions) {
         this.cardnumber = cardnumber;
         this.name = name;
         this.balance = balance;
@@ -39,7 +39,7 @@ public class User {
         return transactions;
     }
 
-    public BigDecimal[] getRequests() {
+    public DepositRequest[] getRequests() {
         return requests;
     }
 }
