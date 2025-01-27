@@ -193,6 +193,8 @@ public class Api extends JPanel {
         pstat.executeUpdate();
         // Remove the request from the database
         deleteDepositRequest(id);
+        // Refresh user data
+        update();
         pstat.close();
         connection.close();
     };
@@ -209,6 +211,67 @@ public class Api extends JPanel {
         pstat.setInt(1, id);
         pstat.setBigDecimal(2, UserSession.getInstance().getUser().getCardnumber());
         pstat.executeUpdate();
+    }
+
+    void send(double amount, BigDecimal cardNumber, String name) throws SQLException{
+        // Establish a connection
+        connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
+        // Get current user data for verification
+        pstat = connection.prepareStatement("SELECT * FROM \"user\" WHERE cardnumber=?");
+        pstat.setBigDecimal(1, UserSession.getInstance().getUser().getCardnumber());
+        ResultSet user = pstat.executeQuery();
+        user.next();
+        // Check if the user's account has enough money to send
+        if(user.getDouble(3) < amount) {
+            pstat.close();
+            connection.close();
+            throw new SQLException("Not enough money on the user's balance");
+        }
+        // Subtract the amount from the user's balance
+        pstat = connection.prepareStatement("UPDATE \"user\" SET balance=balance-? WHERE cardnumber=?");
+        pstat.setDouble(1, amount);
+        pstat.setBigDecimal(2, user.getBigDecimal(1));
+        pstat.executeUpdate();
+        // Add the amount to the target's balance
+        pstat = connection.prepareStatement("UPDATE \"user\" SET balance=balance+? WHERE cardnumber=?");
+        pstat.setDouble(1, amount);
+        pstat.setBigDecimal(2, cardNumber);
+        pstat.executeUpdate();
+
+        // Save transactions for the operation
+        pstat = connection.prepareStatement("INSERT INTO transaction (value, title, type, destination) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+        pstat.setDouble(1, -amount);
+        pstat.setString(2, "Transfer to " + name);
+        pstat.setString(3, "Transfer");
+        pstat.setString(4, "" + cardNumber);
+        pstat.execute();
+        ResultSet transaction = pstat.getGeneratedKeys();
+        transaction.next();
+
+        // Save the transaction in the user's account
+        pstat = connection.prepareStatement("UPDATE \"user\" SET transactions=array_append(COALESCE(transactions, '{}'), ?) WHERE cardnumber=?");
+        pstat.setBigDecimal(1, transaction.getBigDecimal(1));
+        pstat.setBigDecimal(2, UserSession.getInstance().getUser().getCardnumber());
+        pstat.executeUpdate();
+
+        pstat = connection.prepareStatement("INSERT INTO transaction (value, title, sender) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+        pstat.setDouble(1, amount);
+        pstat.setString(2, "Transfer from " + UserSession.getInstance().getUser().getName());
+        pstat.setString(3, UserSession.getInstance().getUser().getCardnumber().toString());
+        pstat.execute();
+        transaction = pstat.getGeneratedKeys();
+        transaction.next();
+
+        // Save the transaction in the target's account
+        pstat = connection.prepareStatement("UPDATE \"user\" SET transactions=array_append(COALESCE(transactions, '{}'), ?) WHERE cardnumber=?");
+        pstat.setBigDecimal(1, transaction.getBigDecimal(1));
+        pstat.setBigDecimal(2, cardNumber);
+        pstat.executeUpdate();
+
+        // Refresh user data
+        update();
+        pstat.close();
+        connection.close();
     }
 
     // Update data about the user

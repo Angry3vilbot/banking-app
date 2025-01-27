@@ -14,6 +14,7 @@ public class UserInterface extends JFrame {
         cPane.add("settings", new Settings());
         cPane.add("main", new Main());
         cPane.add("deposit", new Deposit());
+        cPane.add("send", new Send());
         this.setIconImage(new ImageIcon(getClass().getResource("assets/icon.png")).getImage());
     }
 }
