@@ -1,4 +1,3 @@
-import javax.smartcardio.Card;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -143,7 +142,6 @@ public class Deposit extends Api {
 
     private void cancelBtnHandler(ActionEvent e) {
         // Revert everything to initial values
-        paymentMethod.clearSelection();
         paymentMethod.setSelected(freeMoney.getModel(), true);
         paymentInfo.setText("");
         depositAmount.setText("");
