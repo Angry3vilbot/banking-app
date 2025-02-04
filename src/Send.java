@@ -64,6 +64,7 @@ public class Send extends Api {
 
         newRecentGroup.add(newBtn);
         newRecentGroup.add(recentBtn);
+        newRecentGroup.setSelected(newBtn.getModel(), true);
         newRecentContainer.add(newBtn);
         newRecentContainer.add(recentBtn);
         newBtn.setSelected(true);
@@ -222,7 +223,7 @@ public class Send extends Api {
             double amountData;
             String nameData;
             // Checks the text input fields only if the "New" button is selected
-            if (newRecentGroup.getSelection().equals(newBtn)) {
+            if (newRecentGroup.getSelection().equals(newBtn.getModel())) {
                 // Validate paymentInfoData
                 if (number.getText().matches("[0-9]{16}")) {
                     if (!new BigDecimal(number.getText()).equals(UserSession.getInstance().getUser().getCardnumber())) {
@@ -279,7 +280,8 @@ public class Send extends Api {
             }
             // Save the entries to the file
             savePaymentInfo(recentEntriesList);
-
+            // Read the file again to update the cache with the new entry
+            readRecentEntries();
         } catch (SQLException exception) {
             JOptionPane.showMessageDialog(null, exception.getMessage() + "\n" + exception.getCause());
             for (StackTraceElement i : exception.getStackTrace()) {
@@ -293,11 +295,12 @@ public class Send extends Api {
                 JOptionPane.showMessageDialog(null, exception.getMessage() + "\n" + exception.getCause());
             }
             // Revert everything to initial values
-            newRecentGroup.clearSelection();
             newRecentGroup.setSelected(newBtn.getModel(), true);
             name.setText("");
             number.setText("");
             amount.setText("");
+            CardLayout inputsLayout = (CardLayout) inputsContainer.getLayout();
+            inputsLayout.show(inputsContainer, "text");
             // Update the UI of Main
             Main main = (Main) getParent().getComponent(3);
             main.updateUI();
@@ -313,6 +316,8 @@ public class Send extends Api {
         name.setText("");
         number.setText("");
         amount.setText("");
+        CardLayout inputsLayout = (CardLayout) inputsContainer.getLayout();
+        inputsLayout.show(inputsContainer, "text");
         // Switch card back to Main
         CardLayout layout = (CardLayout) getParent().getLayout();
         layout.show(getParent(), "main");

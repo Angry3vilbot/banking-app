@@ -124,6 +124,8 @@ public class Api extends JPanel {
         // Create the Transaction object and return it
         transaction = new Transaction(resSet.getInt(1), resSet.getDouble(2), resSet.getString(3),
                 resSet.getString(4), resSet.getString(5), resSet.getString(6));
+        pstat.close();
+        connection.close();
         return transaction;
     }
 
@@ -138,6 +140,8 @@ public class Api extends JPanel {
         resSet.next();
         // Create the DepositRequest object and return it
         request = new DepositRequest(id, resSet.getString(2), resSet.getBigDecimal(3), resSet.getBigDecimal(4));
+        pstat.close();
+        connection.close();
         return request;
     }
 
@@ -211,6 +215,8 @@ public class Api extends JPanel {
         pstat.setInt(1, id);
         pstat.setBigDecimal(2, UserSession.getInstance().getUser().getCardnumber());
         pstat.executeUpdate();
+        pstat.close();
+        connection.close();
     }
 
     void send(double amount, BigDecimal cardNumber, String name) throws SQLException{
