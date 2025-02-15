@@ -10,6 +10,7 @@ public class UserInterface extends JFrame {
         cPane.setLayout(cLayout);
 
         cPane.add("login", new Login());
+        cPane.add("signup", new SignUp());
         cPane.add("jars", new Jars());
         cPane.add("settings", new Settings());
         cPane.add("main", new Main());

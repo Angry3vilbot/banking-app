@@ -69,7 +69,9 @@ public class Send extends Api {
         newRecentContainer.add(recentBtn);
         newBtn.setSelected(true);
         name.setColumns(15);
+        nameBox.setPreferredSize(name.getPreferredSize());
         number.setColumns(15);
+        numberBox.setPreferredSize(number.getPreferredSize());
         amount.setColumns(15);
         nameBox.setSelectedIndex(-1);
         numberBox.setSelectedIndex(-1);

@@ -30,37 +30,54 @@ public class Api extends JPanel {
         pstat.clearParameters();
         // Override the password array for safety
         Arrays.fill(password, ' ');
-        // Check if there are no transactions/deposit requests. If there are, get them from the database and store them
-        BigDecimal[] transactionIds = {};
-        BigDecimal[] requestIds = {};
-        DepositRequest[] requests = {};
-        Transaction[] transactions = {};
-        if(resSet.getArray(6) != null) {
-            transactionIds = (BigDecimal[])resSet.getArray(6).getArray();
-            // Order the transaction ids from newest to oldest
-            for (int i = 0; i < transactionIds.length / 2; i++) {
-                BigDecimal temp = transactionIds[i];
-                transactionIds[i] = transactionIds[transactionIds.length - 1 - i];
-                transactionIds[transactionIds.length - 1 - i] = temp;
-            }
-            transactions = new Transaction[transactionIds.length];
-            for (int i = 0; i < transactionIds.length; i++) {
-                transactions[i] = getTransactionData(transactionIds[i].intValue());
-            }
-        }
-        if(resSet.getArray(7) != null) {
-            requestIds = (BigDecimal[])resSet.getArray(7).getArray();
-            requests = new DepositRequest[requestIds.length];
-            for (int i = 0; i < requests.length; i++) {
-                requests[i] = getDepositRequestData(requestIds[i].intValue());
-            }
-        }
-
-        // Create a new User instance to be stored in the UserSession
-        User user = new User(new BigDecimal(resSet.getString(1)), resSet.getString(2),
-                resSet.getDouble(3), (BigDecimal[])resSet.getArray(4).getArray(), transactionIds, requests, transactions);
         // Store the user in the UserSession
-        UserSession.getInstance().setUser(user);
+        storeUser(resSet);
+        pstat.close();
+        connection.close();
+    }
+    // Sign Up
+    void signUp(String name, char[] password) throws SQLException {
+        Integer[] emptyArray = new Integer[0];
+        boolean isValid = false;
+
+        // Establish a connection
+        connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
+        java.sql.Array sqlArray = connection.createArrayOf("INTEGER", emptyArray);
+        // Create a new user
+        pstat = connection.prepareStatement("INSERT INTO \"user\" (cardnumber, name, balance, jars, password, transactions, requests) VALUES (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+        // Generate a unique card number
+        StringBuilder cardnumber = null;
+        while (!isValid) {
+            cardnumber = new StringBuilder("1111");
+            for(int i = 0; i < 12; i++) {
+                cardnumber.append((int) Math.floor(Math.random() * 10));
+            }
+            // Check if the card number already exists in the database
+            PreparedStatement checkStmt = connection.prepareStatement("SELECT 1 FROM \"user\" WHERE cardnumber=?");
+            checkStmt.setBigDecimal(1, new BigDecimal(cardnumber.toString()));
+            ResultSet rs = checkStmt.executeQuery();
+            if (!rs.next()) {
+                isValid = true;
+            }
+        }
+        pstat.setBigDecimal(1, new BigDecimal(cardnumber.toString()));
+        pstat.setString(2, name);
+        pstat.setDouble(3, 0);
+        pstat.setArray(4, sqlArray);
+        // Reader used to not keep a string in memory
+        Reader reader = new CharArrayReader(password);
+        pstat.setCharacterStream(5, reader);
+        pstat.setArray(6, sqlArray);
+        pstat.setArray(7, sqlArray);
+        pstat.execute();
+
+        ResultSet resSet = pstat.getGeneratedKeys();
+        resSet.next();
+        // Store the user in the UserSession
+        storeUser(resSet);
+        pstat.clearParameters();
+        // Override the password array for safety
+        Arrays.fill(password, ' ');
         pstat.close();
         connection.close();
     }
@@ -289,13 +306,19 @@ public class Api extends JPanel {
         pstat.setBigDecimal(1, UserSession.getInstance().getUser().getCardnumber());
         ResultSet resSet = pstat.executeQuery();
         resSet.next();
+        storeUser(resSet);
+        pstat.close();
+        connection.close();
+    }
+
+    private void storeUser(ResultSet resSet) throws SQLException {
         // Check if there are no transactions/deposit requests. If there are, get them from the database and store them
         BigDecimal[] transactionIds = {};
         BigDecimal[] requestIds = {};
         DepositRequest[] requests = {};
         Transaction[] transactions = {};
         if(resSet.getArray(6) != null) {
-            transactionIds = (BigDecimal[])resSet.getArray(6).getArray();
+            transactionIds = (BigDecimal[]) resSet.getArray(6).getArray();
             // Order the transaction ids from newest to oldest
             for (int i = 0; i < transactionIds.length / 2; i++) {
                 BigDecimal temp = transactionIds[i];
@@ -308,7 +331,7 @@ public class Api extends JPanel {
             }
         }
         if(resSet.getArray(7) != null) {
-            requestIds = (BigDecimal[])resSet.getArray(7).getArray();
+            requestIds = (BigDecimal[]) resSet.getArray(7).getArray();
             requests = new DepositRequest[requestIds.length];
             for (int i = 0; i < requests.length; i++) {
                 requests[i] = getDepositRequestData(requestIds[i].intValue());
@@ -316,11 +339,9 @@ public class Api extends JPanel {
         }
         // Create a new User instance to be stored in the UserSession
         User user = new User(new BigDecimal(resSet.getString(1)), resSet.getString(2),
-                resSet.getDouble(3), (BigDecimal[])resSet.getArray(4).getArray(),
+                resSet.getDouble(3), (BigDecimal[]) resSet.getArray(4).getArray(),
                 transactionIds, requests, transactions);
         // Store the user in the UserSession
         UserSession.getInstance().setUser(user);
-        pstat.close();
-        connection.close();
     }
 }
