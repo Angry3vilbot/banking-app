@@ -20,8 +20,8 @@ public class Api extends JPanel {
     void authenticate(String login, char[] password) throws SQLException {
         // Establish a connection
         connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
-        // Get the user with the matching password and card number (who doesn't love saving passwords as plain text)
-        pstat = connection.prepareStatement("SELECT * FROM \"user\" WHERE cardnumber=? AND \"password\"=?");
+        // Get the user with the matching password and card number
+        pstat = connection.prepareStatement("SELECT * FROM \"user\" WHERE cardnumber=? AND \"password\"=crypt(?, \"password\")");
         pstat.setBigDecimal(1, new BigDecimal(login));
         // Reader used to not keep a string in memory
         Reader reader = new CharArrayReader(password);
@@ -49,7 +49,7 @@ public class Api extends JPanel {
         connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
         java.sql.Array sqlArray = connection.createArrayOf("INTEGER", emptyArray);
         // Create a new user
-        pstat = connection.prepareStatement("INSERT INTO \"user\" (cardnumber, name, balance, jars, password, transactions, requests) VALUES (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+        pstat = connection.prepareStatement("INSERT INTO \"user\" (cardnumber, name, balance, jars, password, transactions, requests) VALUES (?,?,?,?,crypt(?, gen_salt('bf')),?,?)", Statement.RETURN_GENERATED_KEYS);
         // Generate a unique card number
         StringBuilder cardnumber = null;
         while (!isValid) {
@@ -215,10 +215,10 @@ public class Api extends JPanel {
     }
 
     void fulfillDepositRequest(int id) throws SQLException {
-        // Establish a connection
-        connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
         // Get the data about the request
         DepositRequest request = getDepositRequestData(id);
+        // Establish a connection
+        connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
         // Subtract the money from the user's account if they have enough
         if (UserSession.getInstance().getUser().getBalance() >= request.getAmount().doubleValue()) {
             pstat = connection.prepareStatement("UPDATE \"user\" SET balance=balance-? WHERE cardnumber=?");
@@ -264,12 +264,13 @@ public class Api extends JPanel {
         pstat.setBigDecimal(1, transaction.getBigDecimal(1));
         pstat.setBigDecimal(2, request.getTarget());
         pstat.executeUpdate();
+
+        pstat.close();
+        connection.close();
         // Remove the request from the database
         deleteDepositRequest(id);
         // Refresh user data
         update();
-        pstat.close();
-        connection.close();
     };
 
     void deleteDepositRequest(int id) throws SQLException {
