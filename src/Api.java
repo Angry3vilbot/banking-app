@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.Arrays;
 
 public class Api extends JPanel {
@@ -31,7 +32,11 @@ public class Api extends JPanel {
         // Override the password array for safety
         Arrays.fill(password, ' ');
         // Store the user in the UserSession
-        storeUser(resSet);
+        try {
+            storeUser(resSet);
+        } catch (SQLException e) {
+            throw new SQLException("Incorrect card number or password");
+        }
         pstat.close();
         connection.close();
     }
@@ -160,6 +165,53 @@ public class Api extends JPanel {
         pstat.close();
         connection.close();
         return request;
+    }
+
+    Jar getJarData(int id) throws SQLException {
+        Jar jar;
+        // Establish a connection
+        connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
+        // Get the jar with the specified ID
+        pstat = connection.prepareStatement("SELECT * FROM \"jar\" WHERE uid=?");
+        pstat.setInt(1, id);
+        ResultSet resSet = pstat.executeQuery();
+        resSet.next();
+        // Create the Jar object and return it
+        // Check if the jar has a goal
+        if(resSet.getBigDecimal(3) != null) {
+            jar = new Jar(id, resSet.getString(2), resSet.getDouble(3), resSet.getDouble(4));
+        }
+        else {
+            jar = new Jar(id, resSet.getString(2), resSet.getDouble(4));
+        }
+        pstat.close();
+        connection.close();
+        return jar;
+    }
+
+    void createJar(String title, Double goal) throws SQLException {
+        // Establish a connection
+        connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
+        // Create a new jar
+        pstat = connection.prepareStatement("INSERT INTO jar (title, goal) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+        pstat.setString(1, title);
+        if (goal == null) {
+            pstat.setNull(2, Types.DOUBLE);
+        }
+        else {
+            pstat.setDouble(2, goal);
+        }
+        pstat.execute();
+        ResultSet resSet = pstat.getGeneratedKeys();
+        resSet.next();
+        // Save the jar in the user's account
+        pstat = connection.prepareStatement("UPDATE \"user\" SET jars=array_append(COALESCE(jars, '{}'), ?) WHERE cardnumber=?");
+        pstat.setBigDecimal(1, resSet.getBigDecimal(1));
+        pstat.setBigDecimal(2, UserSession.getInstance().getUser().getCardnumber());
+        pstat.execute();
+
+        pstat.close();
+        connection.close();
     }
 
     void fulfillDepositRequest(int id) throws SQLException {
@@ -315,8 +367,10 @@ public class Api extends JPanel {
         // Check if there are no transactions/deposit requests. If there are, get them from the database and store them
         BigDecimal[] transactionIds = {};
         BigDecimal[] requestIds = {};
+        BigDecimal[] jarIds = {};
         DepositRequest[] requests = {};
         Transaction[] transactions = {};
+        Jar[] jars = {};
         if(resSet.getArray(6) != null) {
             transactionIds = (BigDecimal[]) resSet.getArray(6).getArray();
             // Order the transaction ids from newest to oldest
@@ -337,10 +391,23 @@ public class Api extends JPanel {
                 requests[i] = getDepositRequestData(requestIds[i].intValue());
             }
         }
+        if(resSet.getArray(4) != null) {
+            jarIds = (BigDecimal[]) resSet.getArray(4).getArray();
+            jars = new Jar[jarIds.length];
+            // Order the jar ids from newest to oldest
+            for (int i = 0; i < jarIds.length / 2; i++) {
+                BigDecimal temp = jarIds[i];
+                jarIds[i] = jarIds[jarIds.length - 1 - i];
+                jarIds[jarIds.length - 1 - i] = temp;
+            }
+            for (int i = 0; i < jars.length; i++) {
+                jars[i] = getJarData(jarIds[i].intValue());
+            }
+        }
         // Create a new User instance to be stored in the UserSession
         User user = new User(new BigDecimal(resSet.getString(1)), resSet.getString(2),
                 resSet.getDouble(3), (BigDecimal[]) resSet.getArray(4).getArray(),
-                transactionIds, requests, transactions);
+                transactionIds, requests, transactions, jars);
         // Store the user in the UserSession
         UserSession.getInstance().setUser(user);
     }

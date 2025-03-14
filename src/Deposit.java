@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 
 public class Deposit extends Api {
+    JLabel title;
     JRadioButton freeMoney;
     JRadioButton fromCard;
     JPanel radioContainer;
@@ -19,6 +20,8 @@ public class Deposit extends Api {
     Deposit() {
         GridBagLayout grid = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
+        title = new JLabel("Deposit");
+        title.setFont(new Font("Dialog", Font.BOLD, 32));
         radioContainer = new JPanel();
         freeMoney = new JRadioButton("Free Money", true);
         fromCard = new JRadioButton("Card Number");
@@ -41,17 +44,23 @@ public class Deposit extends Api {
         cancelBtn.addActionListener(this::cancelBtnHandler);
         this.setLayout(grid);
 
-        // Radio button container
+        // Title label
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        this.add(title, gbc);
+
+        // Radio button container
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         gbc.gridwidth = 2;
         this.add(radioContainer, gbc);
 
         // Payment Info Label
         gbc.gridwidth = 1;
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.insets = new Insets(0, 0, 10, 10);
         this.add(paymentInfoLabel, gbc);
 
@@ -61,7 +70,7 @@ public class Deposit extends Api {
 
         // Deposit Amount Label
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         this.add(depositAmountLabel, gbc);
 
         // Deposit Amount Field
@@ -70,7 +79,7 @@ public class Deposit extends Api {
 
         // Cancel Button
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         this.add(cancelBtn, gbc);
 
         // Submit Button
@@ -101,7 +110,7 @@ public class Deposit extends Api {
             }
 
             //Validate depositAmount
-            if(depositAmount.getText().matches("[0-9]+[.]?[0-9]*") && !depositAmount.getText().equals("0")) {
+            if(depositAmount.getText().matches("[0-9]+[.]?[0-9]+") && !depositAmount.getText().equals("0")) {
                 depositAmountData = Double.parseDouble(depositAmount.getText());
             }
             else {
@@ -132,7 +141,7 @@ public class Deposit extends Api {
             paymentInfo.setText("");
             depositAmount.setText("");
             // Update the UI of Main
-            Main main = (Main) getParent().getComponent(3);
+            Main main = (Main) getParent().getComponent(4);
             main.updateUI();
             // Switch card back to Main
             CardLayout layout = (CardLayout) getParent().getLayout();

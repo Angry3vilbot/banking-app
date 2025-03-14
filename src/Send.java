@@ -241,7 +241,7 @@ public class Send extends Api {
 
                 // Validate nameData
                 if(name.getText().matches("[A-z ]+")) {
-                    nameData = name.getText();
+                    nameData = name.getText().trim();
                 }
                 else {
                     JOptionPane.showMessageDialog(null, "Error: Name must only consist of alphabetical characters", "Error", JOptionPane.ERROR_MESSAGE);
@@ -304,7 +304,7 @@ public class Send extends Api {
             CardLayout inputsLayout = (CardLayout) inputsContainer.getLayout();
             inputsLayout.show(inputsContainer, "text");
             // Update the UI of Main
-            Main main = (Main) getParent().getComponent(3);
+            Main main = (Main) getParent().getComponent(4);
             main.updateUI();
             // Switch card back to Main
             CardLayout layout = (CardLayout) getParent().getLayout();

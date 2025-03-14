@@ -63,9 +63,12 @@ public class Login extends Api{
             CardLayout layout = (CardLayout) getParent().getLayout();
             layout.next(getParent());
             layout.show(getParent(), "main");
-            // Get the Main component
+            // Update the Main component
             Main mainPanel = (Main) getParent().getComponent(4);
             mainPanel.updateUI();
+            // Update the Jars component
+            Jars jars = (Jars) getParent().getComponent(2);
+            jars.updateUI();
         } catch (SQLException exception) {
             JOptionPane.showMessageDialog(null, "Error: " + exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }

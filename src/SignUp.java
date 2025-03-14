@@ -72,8 +72,24 @@ public class SignUp extends Api {
     }
 
     private void submitBtnHandler(ActionEvent event) {
+        if (passField.getPassword().length == 0) {
+            JOptionPane.showMessageDialog(null, "Error: Enter the password", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (passField.getPassword().length > 72) {
+            JOptionPane.showMessageDialog(null, "Error: Password must be less than 72 characters long", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         if(!Arrays.equals(passField.getPassword(), confirmField.getPassword())) {
             JOptionPane.showMessageDialog(null, "Error: The passwords must match", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(nameField.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Error: You must enter a name", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(nameField.getText().trim().matches("[A-z ]+")) {
+            JOptionPane.showMessageDialog(null, "Error: The name must only contain letters and spaces", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         try {
@@ -84,7 +100,7 @@ public class SignUp extends Api {
             CardLayout layout = (CardLayout) getParent().getLayout();
             layout.next(getParent());
             layout.show(getParent(), "main");
-            // Get the Main component
+            // Update the Main component
             Main mainPanel = (Main) getParent().getComponent(4);
             mainPanel.updateUI();
         } catch (SQLException exception) {

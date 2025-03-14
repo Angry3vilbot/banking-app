@@ -79,7 +79,6 @@ public class Settings extends JPanel {
     }
     // Set the Look and Feel based on the user's selection
     private void changeTheme(ItemEvent event) {
-        System.out.println(event.getItem().toString());
         try {
             switch (event.getItem().toString()) {
                 case "Light":
