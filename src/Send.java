@@ -262,7 +262,7 @@ public class Send extends Api {
             }
 
             // Validate amountData
-            if(amount.getText().matches("[0-9]+[.]?[0-9]*") && !amount.getText().equals("0")) {
+            if(amount.getText().matches("[0-9]+([.][0-9]{1,2})?") && Double.parseDouble(amount.getText()) > 0) {
                 amountData = Double.parseDouble(amount.getText());
             }
             else {

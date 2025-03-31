@@ -110,7 +110,7 @@ public class Deposit extends Api {
             }
 
             //Validate depositAmount
-            if(depositAmount.getText().matches("[0-9]+[.]?[0-9]+") && !depositAmount.getText().equals("0")) {
+            if(depositAmount.getText().matches("[0-9]+([.][0-9]{1,2})?") && Double.parseDouble(depositAmount.getText()) > 0) {
                 depositAmountData = Double.parseDouble(depositAmount.getText());
             }
             else {

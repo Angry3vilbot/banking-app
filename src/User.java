@@ -9,8 +9,9 @@ public class User {
     private BigDecimal[] transactionIds;
     private DepositRequest[] requests;
     private Transaction[] transactions;
+    private boolean acknowledgedJarGoalMsg = false;
 
-    public User(BigDecimal cardnumber, String name, double balance, BigDecimal[] jarIds, BigDecimal[] transactionIds, DepositRequest[] requests, Transaction[] transactions, Jar[] jars) {
+    public User(BigDecimal cardnumber, String name, double balance, BigDecimal[] jarIds, BigDecimal[] transactionIds, DepositRequest[] requests, Transaction[] transactions, Jar[] jars, boolean acknowledgedJarGoalMsg) {
         this.cardnumber = cardnumber;
         this.name = name;
         this.balance = balance;
@@ -19,6 +20,7 @@ public class User {
         this.requests = requests;
         this.transactions = transactions;
         this.jars = jars;
+        this.acknowledgedJarGoalMsg = acknowledgedJarGoalMsg;
     }
 
     public BigDecimal getCardnumber() {
@@ -45,5 +47,13 @@ public class User {
 
     public DepositRequest[] getRequests() {
         return requests;
+    }
+
+    public boolean getAcknowledgedJarGoalMsg() {
+        return acknowledgedJarGoalMsg;
+    }
+
+    public void setAcknowledgedJarGoalMsg(boolean confirmed) {
+        acknowledgedJarGoalMsg = confirmed;
     }
 }

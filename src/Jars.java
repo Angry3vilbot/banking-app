@@ -1,10 +1,8 @@
 import javax.swing.*;
-import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
 
 public class Jars extends JPanel {
     JLabel title;
@@ -12,7 +10,9 @@ public class Jars extends JPanel {
     GridBagConstraints gbc;
     JScrollPane jarsContainer;
     JarDisplay jars;
+    JPanel buttonsContainer;
     JButton createJarBtn;
+    JButton depositToJarBtn;
     Navigation navigation;
     Jars() {
         gbLayout = new GridBagLayout();
@@ -26,11 +26,16 @@ public class Jars extends JPanel {
         jarsContainer.setPreferredSize(new Dimension(300, 300));
         JScrollBar verticalScrollBar = jarsContainer.getVerticalScrollBar();
         verticalScrollBar.setUnitIncrement(16);
+        buttonsContainer = new JPanel();
         createJarBtn = new JButton("New Jar", new ImageIcon(getClass().getResource("assets/deposit.png")));
         createJarBtn.addActionListener(this::createJarHandler);
         Dimension btnSize = new Dimension(200, 60);
         createJarBtn.setPreferredSize(btnSize);
         createJarBtn.setFocusable(false);
+        depositToJarBtn = new JButton("Deposit to Jar", new ImageIcon(getClass().getResource("assets/depositJar.png")));
+        depositToJarBtn.setPreferredSize(btnSize);
+        depositToJarBtn.setFocusable(false);
+        depositToJarBtn.addActionListener(this::depositToJarHandler);
 
         // Title label
         gbc.gridx = 0;
@@ -38,20 +43,24 @@ public class Jars extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         this.add(title, gbc);
 
-        // Create Jar button
+        // Buttons container
         gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.CENTER;
-        this.add(createJarBtn, gbc);
+        this.add(buttonsContainer, gbc);
+
+        // Create Jar button
+        buttonsContainer.add(createJarBtn, gbc);
+
+        // Deposit to Jar button
+        buttonsContainer.add(depositToJarBtn, gbc);
 
         // Jars container
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         this.add(jarsContainer, gbc);
 
         // Navigation
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.weighty = 1;
         gbc.weightx = 1;
         gbc.insets = new Insets(0,0,0,0);
@@ -63,6 +72,11 @@ public class Jars extends JPanel {
     private void createJarHandler(ActionEvent event) {
         CardLayout layout = (CardLayout) getParent().getLayout();
         layout.show(getParent(), "createJar");
+    }
+
+    private void depositToJarHandler(ActionEvent event) {
+        CardLayout layout = (CardLayout) getParent().getLayout();
+        layout.show(getParent(), "depositJar");
     }
 
     private class JarDisplay extends JPanel {
@@ -93,7 +107,7 @@ public class Jars extends JPanel {
                     GridBagLayout jgbl = new GridBagLayout();
                     GridBagConstraints jgbc = new GridBagConstraints();
                     jarPanel.setLayout(jgbl);
-
+                    // Jar Image
                     jarImage = new JLabel(new ImageIcon(getClass().getResource("assets/jars.png")));
                     jarImage.setPreferredSize(new Dimension(100,100));
                     jgbc.fill = GridBagConstraints.NONE;
@@ -102,7 +116,7 @@ public class Jars extends JPanel {
                     jgbc.gridheight = 3;
                     jgbc.weightx = 0;
                     jarPanel.add(jarImage, jgbc);
-
+                    // Jar Title
                     jarTitle = new JLabel(currentUser.getJars()[i].getTitle());
                     jarTitle.setPreferredSize(new Dimension(200, 30));
                     jgbc.fill = GridBagConstraints.HORIZONTAL;
@@ -112,7 +126,7 @@ public class Jars extends JPanel {
                     jgbc.weightx = 1;
                     jgbc.anchor = GridBagConstraints.LINE_START;
                     jarPanel.add(jarTitle, jgbc);
-
+                    // Jar goal progress bar and value
                     if (currentUser.getJars()[i].getGoal() != 0.0) {
                         jarValue = new JLabel(currentUser.getJars()[i].getBalance() + " € / " + currentUser.getJars()[i].getGoal() + " €");
                         jarGoalProgress = new JProgressBar(0, (int) Math.round(currentUser.getJars()[i].getGoal()));
@@ -158,6 +172,7 @@ public class Jars extends JPanel {
                     // Deposit Button
                     depositBtn = new JButton("Deposit");
                     depositBtn.setFocusable(false);
+                    depositBtn.putClientProperty("id", currentUser.getJars()[i].getId());
                     depositBtn.addActionListener(this::depositHandler);
                     jgbc.gridx = 1;
                     jgbc.anchor = GridBagConstraints.CENTER;
@@ -166,6 +181,9 @@ public class Jars extends JPanel {
                     withdrawBtn = new JButton("Withdraw");
                     withdrawBtn.setFocusable(false);
                     withdrawBtn.addActionListener(this::withdrawHandler);
+                    withdrawBtn.putClientProperty("id", currentUser.getJars()[i].getId());
+                    withdrawBtn.putClientProperty("title", currentUser.getJars()[i].getTitle());
+                    withdrawBtn.putClientProperty("value", currentUser.getJars()[i].getBalance());
                     jgbc.gridx = 2;
                     jgbc.anchor = GridBagConstraints.LINE_END;
                     buttonsContainer.add(withdrawBtn, jgbc);
@@ -183,10 +201,23 @@ public class Jars extends JPanel {
             clipboard.setContents(selection, null);
         }
         private void depositHandler(ActionEvent event) {
-
+            DepositJar depositJar = (DepositJar) getParent().getParent().getParent().getParent().getComponent(8);
+            depositJar.idField.setText(((JButton)event.getSource()).getClientProperty("id") + "");
+            CardLayout layout = (CardLayout) getParent().getParent().getParent().getParent().getLayout();
+            layout.show(getParent().getParent().getParent().getParent(), "depositJar");
         }
         private void withdrawHandler(ActionEvent event) {
-
+            // WithdrawJar screen
+            WithdrawJar withdrawJar = (WithdrawJar) getParent().getParent().getParent().getParent().getComponent(9);
+            // Button clicked
+            JButton button = (JButton) event.getSource();
+            // Set the title and ID of the jar to withdraw from
+            withdrawJar.setTitleAndID((String) button.getClientProperty("title"), (Integer) button.getClientProperty("id"));
+            // Set the amount field label
+            withdrawJar.setAmountLabel(button.getClientProperty("value") + " €");
+            // Show the WithdrawJar screen
+            CardLayout layout = (CardLayout) getParent().getParent().getParent().getParent().getLayout();
+            layout.show(getParent().getParent().getParent().getParent(), "withdrawJar");
         }
     }
 
@@ -207,7 +238,13 @@ public class Jars extends JPanel {
             gbc.fill = GridBagConstraints.HORIZONTAL;
             this.add(jarsContainer, gbc);
         }
-        this.revalidate();
-        this.repaint();
+        // Refresh the UI
+        SwingUtilities.invokeLater(() -> {
+            Window window = SwingUtilities.getWindowAncestor(this);
+            if(window != null) {
+                window.revalidate();
+                window.repaint();
+            }
+        });
     }
 }

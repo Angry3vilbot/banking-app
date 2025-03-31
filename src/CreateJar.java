@@ -69,8 +69,8 @@ public class CreateJar extends Api {
             String titleData = "";
             Double goalData;
 
-            // Check if the title is empty
-            if(titleField.getText().trim().isEmpty()){
+            // Check if the title is empty or only contains "For"
+            if(titleField.getText().trim().isEmpty() || titleField.getText().trim().equals("For")) {
                 JOptionPane.showMessageDialog(null, "Error: The title cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -79,7 +79,7 @@ public class CreateJar extends Api {
             }
             // Check if the goal field has invalid characters if it isn't empty
             if (!goalField.getText().trim().isEmpty()) {
-                if(!goalField.getText().matches("[0-9]+[.]?[0-9]+") && !goalField.getText().equals("0")) {
+                if(!goalField.getText().matches("[0-9]+([.][0-9]{1,2})?") && !goalField.getText().equals("0")) {
                     JOptionPane.showMessageDialog(null, "Error: The goal field must be a positive number or be empty", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }

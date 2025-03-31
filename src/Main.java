@@ -186,9 +186,49 @@ public class Main extends Api {
                     }
                 }
             }
+            // Check if the user has jars that have reached their goal and hasn't already acknowledged the message
+            if(UserSession.getInstance().getUser().getJars() != null && !UserSession.getInstance().getUser().getAcknowledgedJarGoalMsg()) {
+                int count = 0;
+                StringBuilder jarString = new StringBuilder();
+                for (Jar jar : UserSession.getInstance().getUser().getJars()) {
+                    if (jar.getGoal() != 0.0 && jar.getBalance() >= jar.getGoal()) {
+                        count++;
+                        jarString.append("\"");
+                        jarString.append(jar.getTitle());
+                        jarString.append("\"");
+                        if (count >= 1) {
+                            jarString.append(", ");
+                        }
+                    }
+                }
+                // Delete the space and comma after the last jar
+                jarString.delete(jarString.length() - 2, jarString.length());
+                if(count == 1) {
+                    JOptionPane.showMessageDialog(this, "Jar " + jarString + " has reached its goal", "Jar Goal Reached", JOptionPane.PLAIN_MESSAGE);
+                }
+                else if (count >= 2) {
+                    JOptionPane.showMessageDialog(this, "Jars " + jarString + " have reached their goals", "Jar Goal Reached", JOptionPane.PLAIN_MESSAGE);
+                }
+
+                UserSession.getInstance().getUser().setAcknowledgedJarGoalMsg(true);
+                // Refresh the UI
+                SwingUtilities.invokeLater(() -> {
+                    Window window = SwingUtilities.getWindowAncestor(this);
+                    if(window != null) {
+                        window.revalidate();
+                        window.repaint();
+                    }
+                });
+            }
         }
-        this.revalidate();
-        this.repaint();
+        // Refresh the UI
+        SwingUtilities.invokeLater(() -> {
+            Window window = SwingUtilities.getWindowAncestor(this);
+            if(window != null) {
+                window.revalidate();
+                window.repaint();
+            }
+        });
     }
 
     private void deposit(ActionEvent e) {

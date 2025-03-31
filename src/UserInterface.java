@@ -5,6 +5,7 @@ public class UserInterface extends JFrame {
     Container cPane;
     CardLayout cLayout;
     UserInterface() {
+        setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
         cPane = getContentPane();
         cLayout = new CardLayout();
         cPane.setLayout(cLayout);
@@ -17,6 +18,8 @@ public class UserInterface extends JFrame {
         cPane.add("deposit", new Deposit());
         cPane.add("send", new Send());
         cPane.add("createJar", new CreateJar());
+        cPane.add("depositJar", new DepositJar());
+        cPane.add("withdrawJar", new WithdrawJar());
         this.setIconImage(new ImageIcon(getClass().getResource("assets/icon.png")).getImage());
     }
 }

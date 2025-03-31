@@ -214,6 +214,94 @@ public class Api extends JPanel {
         connection.close();
     }
 
+    void depositToJar(int id, double amount) throws SQLException {
+        // Get the jar data to verify that it exists
+        Jar jar = getJarData(id);
+        // Establish a connection
+        connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
+
+        // Subtract the amount from the user's account
+        pstat = connection.prepareStatement("UPDATE \"user\" SET balance=balance-? WHERE cardnumber=?");
+        pstat.setDouble(1, amount);
+        pstat.setBigDecimal(2, UserSession.getInstance().getUser().getCardnumber());
+        pstat.executeUpdate();
+
+        // Add the amount to the jar
+        pstat = connection.prepareStatement("UPDATE jar SET balance=balance+? WHERE uid=?");
+        pstat.setDouble(1, amount);
+        pstat.setInt(2, id);
+        pstat.executeUpdate();
+
+        // Create a transaction for the operation
+        pstat = connection.prepareStatement("INSERT INTO transaction (value, title, type, destination) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+        pstat.setDouble(1, -amount);
+        pstat.setString(2, "Deposit into jar " + jar.getTitle());
+        pstat.setString(3, "Deposit");
+        pstat.setInt(4, id);
+        pstat.execute();
+        ResultSet transaction = pstat.getGeneratedKeys();
+        transaction.next();
+
+        // Save the transaction in the user's account
+        pstat = connection.prepareStatement("UPDATE \"user\" SET transactions=array_append(COALESCE(transactions, '{}'), ?) WHERE cardnumber=?");
+        pstat.setBigDecimal(1, transaction.getBigDecimal(1));
+        pstat.setBigDecimal(2, UserSession.getInstance().getUser().getCardnumber());
+        pstat.executeUpdate();
+
+        pstat.close();
+        connection.close();
+    }
+
+    void withdrawFromJar(int id, double amount, boolean isBroken) throws SQLException {
+        // Get the jar data to verify that it exists
+        Jar jar = getJarData(id);
+        // Establish a connection
+        connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
+        // Subtract the amount from the jar if it is not being broken
+        if (!isBroken) {
+            pstat = connection.prepareStatement("UPDATE jar SET balance=balance-? WHERE uid=?");
+            pstat.setDouble(1, amount);
+            pstat.setInt(2, id);
+            pstat.executeUpdate();
+        }
+        // Update the user's balance
+        pstat = connection.prepareStatement("UPDATE \"user\" SET balance=balance+? WHERE cardnumber=?");
+        pstat.setDouble(1, amount);
+        pstat.setBigDecimal(2, UserSession.getInstance().getUser().getCardnumber());
+        pstat.executeUpdate();
+
+        // Create a transaction for the operation
+        pstat = connection.prepareStatement("INSERT INTO transaction (value, title, type, destination) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+        pstat.setDouble(1, amount);
+        pstat.setString(2, "Withdraw from jar " + jar.getTitle());
+        pstat.setString(3, "Withdraw");
+        pstat.setInt(4, id);
+        pstat.execute();
+        ResultSet transaction = pstat.getGeneratedKeys();
+        transaction.next();
+
+        // Save the transaction in the user's account
+        pstat = connection.prepareStatement("UPDATE \"user\" SET transactions=array_append(COALESCE(transactions, '{}'), ?) WHERE cardnumber=?");
+        pstat.setBigDecimal(1, transaction.getBigDecimal(1));
+        pstat.setBigDecimal(2, UserSession.getInstance().getUser().getCardnumber());
+        pstat.executeUpdate();
+
+        // If the jar is broken, delete it
+        if (isBroken) {
+            pstat = connection.prepareStatement("DELETE FROM jar WHERE uid=?");
+            pstat.setInt(1, id);
+            pstat.execute();
+            // Remove the jar from the user's account
+            pstat = connection.prepareStatement("UPDATE \"user\" SET jars=array_remove(jars, ?) WHERE cardnumber=?");
+            pstat.setInt(1, id);
+            pstat.setBigDecimal(2, UserSession.getInstance().getUser().getCardnumber());
+            pstat.executeUpdate();
+        }
+
+        pstat.close();
+        connection.close();
+    }
+
     void fulfillDepositRequest(int id) throws SQLException {
         // Get the data about the request
         DepositRequest request = getDepositRequestData(id);
@@ -405,10 +493,12 @@ public class Api extends JPanel {
                 jars[i] = getJarData(jarIds[i].intValue());
             }
         }
+        // Is true if the user was logged and if they already acknowledged the jar goal message, false otherwise
+        boolean acknowledgedJarGoalMsg = UserSession.getInstance().getUser() != null && UserSession.getInstance().getUser().getAcknowledgedJarGoalMsg();
         // Create a new User instance to be stored in the UserSession
         User user = new User(new BigDecimal(resSet.getString(1)), resSet.getString(2),
                 resSet.getDouble(3), (BigDecimal[]) resSet.getArray(4).getArray(),
-                transactionIds, requests, transactions, jars);
+                transactionIds, requests, transactions, jars, acknowledgedJarGoalMsg);
         // Store the user in the UserSession
         UserSession.getInstance().setUser(user);
     }
