@@ -11,7 +11,6 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.Map;
 
 public class Send extends Api {
     JLabel title;

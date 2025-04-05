@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.math.BigDecimal;
 import java.sql.SQLException;
 
 public class CreateJar extends Api {

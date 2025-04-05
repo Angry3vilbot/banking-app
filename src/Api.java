@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.io.CharArrayReader;
 import java.io.Reader;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,8 +12,11 @@ import java.sql.Types;
 import java.util.Arrays;
 
 public class Api extends JPanel {
-    private final String DATABASE_URL = "jdbc:postgresql://localhost:5432/postgres";
-    private final String dbpassword = System.getenv("PASSWORD");
+    private final String DATABASE_URL = System.getProperty("db.url",
+            "jdbc:postgresql://localhost:5432/postgres?" +
+                    "ssl=false&" +
+                    "sslmode=disable");
+    private final String dbpassword = System.getProperty("db.password", "postgres");
     private Connection connection = null;
     private PreparedStatement pstat = null;
     void authenticate(String login, char[] password) throws SQLException {
