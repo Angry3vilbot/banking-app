@@ -20,6 +20,8 @@ public class App implements Runnable {
         } catch (IOException e) {
             // Print the error to original stderr if file redirection fails
             e.printStackTrace();
+            // Change the error stream to the console
+            System.setErr(System.out);
         }
         // Set the look and feel to FlatLaf Light
         try {
