@@ -72,7 +72,12 @@ public class DepositJar extends Api {
             int id;
             double amount;
             if(idField.getText().matches("[0-9]+")) {
-                id = Integer.parseInt(idField.getText());
+                try {
+                    id = Integer.parseInt(idField.getText());
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "ID must be a valid number", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             }
             else {
                 JOptionPane.showMessageDialog(this, "ID must be a number", "Error", JOptionPane.ERROR_MESSAGE);

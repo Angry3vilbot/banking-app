@@ -99,6 +99,12 @@ public class Jars extends JPanel {
             this.setLayout(gbagLayout);
 
             if(currentUser != null) {
+                if(currentUser.getJars() == null || currentUser.getJars().length == 0) {
+                    JLabel noJarsLabel = new JLabel("No jars found");
+                    noJarsLabel.setFont(new Font("Dialog", Font.PLAIN, 20));
+                    noJarsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                    this.add(noJarsLabel);
+                }
                 for (int i = 0; i < currentUser.getJars().length; i++) {
                     jarPanel = new JPanel();
                     jarPanel.setPreferredSize(new Dimension(500, 100));

@@ -216,9 +216,25 @@ public class Api extends JPanel {
 
     void depositToJar(int id, double amount) throws SQLException {
         // Get the jar data to verify that it exists
-        Jar jar = getJarData(id);
+        Jar jar = null;
+        try {
+            jar = getJarData(id);
+        } catch (SQLException e) {
+            throw new SQLException("Jar with ID " + id + " does not exist");
+        }
         // Establish a connection
         connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
+
+        // Check if the user has enough money to deposit
+        pstat = connection.prepareStatement("SELECT * FROM \"user\" WHERE cardnumber=?");
+        pstat.setBigDecimal(1, UserSession.getInstance().getUser().getCardnumber());
+        ResultSet user = pstat.executeQuery();
+        user.next();
+        if(user.getDouble(3) < amount) {
+            pstat.close();
+            connection.close();
+            throw new SQLException("Not enough money on the balance");
+        }
 
         // Subtract the amount from the user's account
         pstat = connection.prepareStatement("UPDATE \"user\" SET balance=balance-? WHERE cardnumber=?");
@@ -271,7 +287,7 @@ public class Api extends JPanel {
         pstat.executeUpdate();
 
         // Create a transaction for the operation
-        pstat = connection.prepareStatement("INSERT INTO transaction (value, title, type, destination) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+        pstat = connection.prepareStatement("INSERT INTO transaction (value, title, type, sender) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         pstat.setDouble(1, amount);
         pstat.setString(2, "Withdraw from jar " + jar.getTitle());
         pstat.setString(3, "Withdraw");
@@ -453,7 +469,7 @@ public class Api extends JPanel {
     }
 
     private void storeUser(ResultSet resSet) throws SQLException {
-        // Check if there are no transactions/deposit requests. If there are, get them from the database and store them
+        // Check if there are no transactions/deposit requests/jars. If there are, get them from the database and store them
         BigDecimal[] transactionIds = {};
         BigDecimal[] requestIds = {};
         BigDecimal[] jarIds = {};

@@ -14,7 +14,7 @@ public class App implements Runnable {
     @Override
     public void run() {
         UserInterface ui = new UserInterface();
-        ui.setTitle("Banking App (Working Title)");
+        ui.setTitle("Banking App");
         ui.setSize(1000, 500);
         ui.setVisible(true);
         ui.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

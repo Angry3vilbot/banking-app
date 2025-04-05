@@ -187,7 +187,7 @@ public class Main extends Api {
                 }
             }
             // Check if the user has jars that have reached their goal and hasn't already acknowledged the message
-            if(UserSession.getInstance().getUser().getJars() != null && !UserSession.getInstance().getUser().getAcknowledgedJarGoalMsg()) {
+            if(UserSession.getInstance().getUser().getJars().length != 0 && !UserSession.getInstance().getUser().getAcknowledgedJarGoalMsg()) {
                 int count = 0;
                 StringBuilder jarString = new StringBuilder();
                 for (Jar jar : UserSession.getInstance().getUser().getJars()) {
@@ -201,12 +201,13 @@ public class Main extends Api {
                         }
                     }
                 }
-                // Delete the space and comma after the last jar
-                jarString.delete(jarString.length() - 2, jarString.length());
+
                 if(count == 1) {
                     JOptionPane.showMessageDialog(this, "Jar " + jarString + " has reached its goal", "Jar Goal Reached", JOptionPane.PLAIN_MESSAGE);
                 }
                 else if (count >= 2) {
+                    // Delete the space and comma after the last jar
+                    jarString.delete(jarString.length() - 2, jarString.length());
                     JOptionPane.showMessageDialog(this, "Jars " + jarString + " have reached their goals", "Jar Goal Reached", JOptionPane.PLAIN_MESSAGE);
                 }
 
