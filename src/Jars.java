@@ -230,7 +230,8 @@ public class Jars extends JPanel {
             }
             jars = new JarDisplay();
             jarsContainer = new JScrollPane(jars, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-            jarsContainer.setPreferredSize(new Dimension(300, 300));
+            jarsContainer.setBorder(null);
+            jarsContainer.setPreferredSize(new Dimension(300, 500));
             JScrollBar verticalScrollBar = jarsContainer.getVerticalScrollBar();
             verticalScrollBar.setUnitIncrement(16);
 

@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Navigation extends JPanel{
     JButton homeBtn, jarsBtn, settingsBtn;
@@ -13,43 +12,28 @@ public class Navigation extends JPanel{
         Dimension btnSize = new Dimension(200, 60);
         homeBtn.setPreferredSize(btnSize);
         homeBtn.setFocusable(false);
-        homeBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                homeHandler();
-            }
-        });
+        homeBtn.addActionListener(this::homeHandler);
         jarsBtn.setPreferredSize(btnSize);
         jarsBtn.setFocusable(false);
-        jarsBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                jarsHandler();
-            }
-        });
+        jarsBtn.addActionListener(this::jarsHandler);
         settingsBtn.setPreferredSize(btnSize);
         settingsBtn.setFocusable(false);
-        settingsBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                settingsHandler();
-            }
-        });
+        settingsBtn.addActionListener(this::settingsHandler);
 
         this.add(homeBtn);
         this.add(jarsBtn);
         this.add(settingsBtn);
     }
 
-    void homeHandler() {
+    void homeHandler(ActionEvent event) {
         CardLayout layout = (CardLayout) getParent().getParent().getLayout();
         layout.show(getParent().getParent(), "main");
     }
-    void jarsHandler() {
+    void jarsHandler(ActionEvent event) {
         CardLayout layout = (CardLayout) getParent().getParent().getLayout();
         layout.show(getParent().getParent(), "jars");
     }
-    void settingsHandler() {
+    void settingsHandler(ActionEvent event) {
         CardLayout layout = (CardLayout) getParent().getParent().getLayout();
         layout.show(getParent().getParent(), "settings");
     }

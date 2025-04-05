@@ -3,11 +3,11 @@ import java.awt.*;
 
 public class UserInterface extends JFrame {
     Container cPane;
-    CardLayout cLayout;
+    BetterCardLayout cLayout;
     UserInterface() {
         setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
         cPane = getContentPane();
-        cLayout = new CardLayout();
+        cLayout = new BetterCardLayout();
         cPane.setLayout(cLayout);
 
         cPane.add("login", new Login());
