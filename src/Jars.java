@@ -235,8 +235,13 @@ public class Jars extends JPanel {
                 this.remove(jarsContainer);
             }
             jars = new JarDisplay();
-            jarsContainer = new JScrollPane(jars, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-            jarsContainer.setBorder(null);
+            jarsContainer = new JScrollPane(jars, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER){
+                @Override
+                public void updateUI() {
+                    super.updateUI();
+                    setBorder(null);
+                }
+            };
             jarsContainer.setPreferredSize(new Dimension(300, 500));
             JScrollBar verticalScrollBar = jarsContainer.getVerticalScrollBar();
             verticalScrollBar.setUnitIncrement(16);
