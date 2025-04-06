@@ -1,18 +1,56 @@
+package angry3vilbot.bankingapp;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 
+/**
+ * Main class represents the Main screen of the application.
+ * It displays the user's name, balance, and a list of their transactions.
+ * It also provides buttons for depositing and sending money.
+ */
 public class Main extends Api {
+    /**
+     * {@link GridBagConstraints} object for layout management.
+     */
     GridBagConstraints gbc;
+    /**
+     * Label for the user's name.
+     */
     JLabel name;
+    /**
+     * Label for the user's balance.
+     */
     JLabel balance;
+    /**
+     * {@link Navigation} object for the navigation bar.
+     */
     Navigation navigation;
+    /**
+     * {@link GridBagLayout} for the main screen.
+     */
     GridBagLayout gbLayout;
+    /**
+     * Button to switch to the {@link Deposit} screen.
+     */
     JButton deposit;
+    /**
+     * Button to switch to the {@link Send} screen.
+     */
     JButton send;
+    /**
+     * Panel that contains the transactions.
+     */
     Transactions transactions;
+    /**
+     * Scroll pane for the {@link #transactions} panel.
+     */
     JScrollPane transactionsScroll;
+
+    /**
+     * Constructs a Main object.
+     */
     Main() {
         User currentUser = UserSession.getInstance().getUser();
         gbLayout = new GridBagLayout();
@@ -119,6 +157,9 @@ public class Main extends Api {
         this.add(navigation, gbc);
     }
 
+    /**
+     * Updates the UI components with the current user's information.
+     */
     public void updateUI() {
         User currentUser = UserSession.getInstance().getUser();
         // If logged in
@@ -232,25 +273,78 @@ public class Main extends Api {
         });
     }
 
+    /**
+     * Handles the action of the deposit button.
+     * This method is called when the deposit button is clicked.
+     * It switches the view to the deposit screen.
+     * @param e the event that triggered the action
+     */
     private void deposit(ActionEvent e) {
         CardLayout layout = (CardLayout) getParent().getLayout();
         layout.show(getParent(), "deposit");
     }
+
+    /**
+     * Handles the action of the send button.
+     * This method is called when the send button is clicked.
+     * It switches the view to the send screen.
+     * @param e the event that triggered the action
+     */
     private void send(ActionEvent e) {
         CardLayout layout = (CardLayout) getParent().getLayout();
         layout.show(getParent(), "send");
     }
 
+    /**
+     * Inner class representing the transactions panel.
+     * It displays the user's transactions.
+     * <br><br>
+     * It creates a {@link JPanel} for each transaction and adds them to itself.
+     * Each transaction panel contains the title, value, and sender or destination of the transaction.
+     * <br><br>
+     * The <code>Transactions</code> object is created in the constructor and added to a {@link JScrollPane}.
+     */
     class Transactions extends JPanel {
+        /**
+         * {@link User} object representing the current user.
+         */
         User currentUser;
+        /**
+         * {@link GridBagLayout} for the transactions panel.
+         */
         GridBagLayout gbLayout;
+        /**
+         * {@link GridBagConstraints} object for layout management.
+         */
         GridBagConstraints gridBagConstraints;
+        /**
+         * Panel for each transaction.
+         */
         JPanel transaction;
+        /**
+         * Label for the title of the transactions panel.
+         */
         JLabel caption;
+        /**
+         * Label for the title of the transaction.
+         */
         JLabel title;
+        /**
+         * Label for the value of the transaction.
+         */
         JLabel value;
+        /**
+         * Label for the sender of the transaction.
+         */
         JLabel sender;
+        /**
+         * Label for the destination of the transaction.
+         */
         JLabel destination;
+
+        /**
+         * Constructs a Transactions object.
+         */
         Transactions() {
             currentUser = UserSession.getInstance().getUser();
             caption = new JLabel("Transactions");

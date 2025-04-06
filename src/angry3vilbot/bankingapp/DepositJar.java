@@ -1,19 +1,56 @@
+package angry3vilbot.bankingapp;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 
+/**
+ * DepositJar class is a {@link JPanel} that allows the user to deposit money into a jar.
+ * It contains a form with fields for ID and amount, and buttons for deposit and cancel.
+ * It extends the {@link Api} class to access the database and update the user information.
+ */
 public class DepositJar extends Api {
+    /**
+     * GridBagLayout object used for layout management.
+     */
     GridBagLayout gbLayout;
+    /**
+     * GridBagConstraints object used for layout management.
+     */
     GridBagConstraints gbc;
+    /**
+     * Label for the title of the panel.
+     */
     JLabel title;
+    /**
+     * Label for the {@link #idField}.
+     */
     JLabel idLabel;
+    /**
+     * Label for the {@link #amountField}.
+     */
     JLabel amountLabel;
+    /**
+     * Field for the ID of the jar to deposit money into.
+     */
     JTextField idField;
+    /**
+     * Field for the amount of money to deposit into the jar.
+     */
     JTextField amountField;
+    /**
+     * Button to deposit money into the jar.
+     */
     JButton depositBtn;
+    /**
+     * Button to reset the input fields and switch back to the Jars panel.
+     */
     JButton cancelBtn;
 
+    /**
+     * Constructs a new DepositJar panel.
+     */
     DepositJar() {
         gbLayout = new GridBagLayout();
         gbc = new GridBagConstraints();
@@ -67,6 +104,14 @@ public class DepositJar extends Api {
         this.add(depositBtn, gbc);
     }
 
+    /**
+     * Handles the deposit button click event.
+     * Validates the input fields and calls the {@link Api#depositToJar(int, double)} method to deposit money into the jar.
+     * If the deposit is successful, it updates the user information, resets the input fields
+     * and switches the card back to the {@link Jars} panel.
+     * If an error occurs, it shows an error message.
+     * @param e the event that triggered the method
+     */
     private void depositHandler(ActionEvent e) {
         try {
             int id;
@@ -121,6 +166,12 @@ public class DepositJar extends Api {
             layout.show(getParent(), "jars");
         }
     }
+
+    /**
+     * Handles the cancel button click event.
+     * Resets the input fields and switches the card back to the {@link Jars} panel.
+     * @param e the event that triggered the method
+     */
     private void cancelHandler(ActionEvent e) {
         idField.setText("");
         amountField.setText("");

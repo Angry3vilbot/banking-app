@@ -1,9 +1,25 @@
+package angry3vilbot.bankingapp;
+
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * UserInterface class that extends {@link JFrame} to create a GUI for the application.
+ * It uses a custom {@link BetterCardLayout} to manage different panels.
+ */
 public class UserInterface extends JFrame {
+    /**
+     * The {@link Container} object that holds the panels for the user interface.
+     */
     Container cPane;
+    /**
+     * The {@link BetterCardLayout} object used to manage the layout of the panels.
+     */
     BetterCardLayout cLayout;
+
+    /**
+     * Constructs a UserInterface object.
+     */
     UserInterface() {
         setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
         cPane = getContentPane();

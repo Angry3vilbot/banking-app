@@ -1,3 +1,5 @@
+package angry3vilbot.bankingapp;
+
 import javax.swing.*;
 import java.io.CharArrayReader;
 import java.io.Reader;
@@ -11,14 +13,42 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.Arrays;
 
+/**
+ * API class for the Banking Application.
+ * This class handles the connection to the database and provides methods for user authentication,
+ * sign up, deposit, withdraw, and other operations.
+ * It uses JDBC to interact with a PostgreSQL database.
+ * It also provides methods to create and manage jars, transactions, and deposit requests.
+ */
 public class Api extends JPanel {
+    /**
+     * The URL of the database.
+     */
     private final String DATABASE_URL = System.getProperty("db.url",
             "jdbc:postgresql://localhost:5432/postgres?" +
                     "ssl=false&" +
                     "sslmode=disable");
+    /**
+     * The password for the database connection.
+     */
     private final String dbpassword = System.getProperty("db.password", "postgres");
+    /**
+     * The {@link Connection} object that represents the connection to the database.
+     */
     private Connection connection = null;
+    /**
+     * The {@link PreparedStatement} object used to execute SQL queries.
+     */
     private PreparedStatement pstat = null;
+
+    /**
+     * Checks the provided card number and password against the database.
+     * If the credentials are valid, it stores the user information in the UserSession.
+     *
+     * @param login the card number of the user
+     * @param password the password of the user
+     * @throws SQLException if there is an error during the database operation
+     */
     void authenticate(String login, char[] password) throws SQLException {
         // Establish a connection
         connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
@@ -42,6 +72,14 @@ public class Api extends JPanel {
         pstat.close();
         connection.close();
     }
+
+    /**
+     * Signs up a new user by creating a new entry in the database.
+     * Generates a unique card number and stores the user information.
+     * @param name the name of the user
+     * @param password the password of the user
+     * @throws SQLException if there is an error during the database operation
+     */
     // Sign Up
     void signUp(String name, char[] password) throws SQLException {
         Integer[] emptyArray = new Integer[0];
@@ -88,6 +126,13 @@ public class Api extends JPanel {
         pstat.close();
         connection.close();
     }
+
+    /**
+     * Creates a deposit request for the user with the <code>payInfo</code> card number and saves it in the database.
+     * @param payInfo the card number of the user who receives the deposit request
+     * @param amount the amount of money to be deposited
+     * @throws SQLException if there is an error during the database operation
+     */
     // Deposit via card number
     void deposit(BigDecimal payInfo, Double amount) throws SQLException{
         // Establish a connection
@@ -110,6 +155,14 @@ public class Api extends JPanel {
         pstat.close();
         connection.close();
     }
+
+    /**
+     * Deposits money into the user's account using the Free Money feature.
+     * This method adds the specified amount to the user's balance
+     * and creates a transaction for the operation.
+     * @param amount the amount of money to be deposited
+     * @throws SQLException if there is an error during the database operation
+     */
     // "Deposit" via Free Money
     void deposit(Double amount) throws SQLException{
         // Establish a connection
@@ -136,6 +189,16 @@ public class Api extends JPanel {
         pstat.close();
         connection.close();
     }
+
+    /**
+     * Retrieves the transaction data for a given transaction ID.
+     * This method establishes a connection to the database,
+     * executes a query to get the transaction details,
+     * and creates a {@link Transaction} object with the retrieved data.
+     * @param id the ID of the transaction to be retrieved
+     * @return the {@link Transaction} object with the specified ID
+     * @throws SQLException if there is an error during the database operation
+     */
     Transaction getTransactionData(int id) throws SQLException {
         Transaction transaction;
         // Establish a connection
@@ -153,6 +216,15 @@ public class Api extends JPanel {
         return transaction;
     }
 
+    /**
+     * Retrieves the deposit request data for a given request ID.
+     * This method establishes a connection to the database,
+     * executes a query to get the deposit request details,
+     * and creates a {@link DepositRequest} object with the retrieved data.
+     * @param id the ID of the deposit request to be retrieved
+     * @return the {@link DepositRequest} object with the specified ID
+     * @throws SQLException if there is an error during the database operation
+     */
     DepositRequest getDepositRequestData(int id) throws SQLException {
         DepositRequest request;
         // Establish a connection
@@ -169,6 +241,15 @@ public class Api extends JPanel {
         return request;
     }
 
+    /**
+     * Retrieves the jar data for a given jar ID.
+     * This method establishes a connection to the database,
+     * executes a query to get the jar details,
+     * and creates a {@link Jar} object with the retrieved data.
+     * @param id the ID of the jar to be retrieved
+     * @return the {@link Jar} object with the specified ID
+     * @throws SQLException if there is an error during the database operation
+     */
     Jar getJarData(int id) throws SQLException {
         Jar jar;
         // Establish a connection
@@ -191,6 +272,15 @@ public class Api extends JPanel {
         return jar;
     }
 
+    /**
+     * Creates a new jar for the user and saves it in the database.
+     * This method establishes a connection to the database,
+     * executes an insert query to create the jar,
+     * and updates the user's account by adding the new jar ID.
+     * @param title the title of the jar
+     * @param goal the goal of the jar, null if there is no goal
+     * @throws SQLException if there is an error during the database operation
+     */
     void createJar(String title, Double goal) throws SQLException {
         // Establish a connection
         connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
@@ -216,6 +306,17 @@ public class Api extends JPanel {
         connection.close();
     }
 
+    /**
+     * Deposits money into a jar.
+     * This method checks if the user has enough money to deposit.
+     * If they do, it subtracts the amount from the user's account,
+     * adds the amount to the jar,
+     * creates a transaction for the operation,
+     * and saves the transaction in the user's account.
+     * @param id the ID of the jar to be deposited into
+     * @param amount the amount of money to be deposited
+     * @throws SQLException if there is an error during the database operation
+     */
     void depositToJar(int id, double amount) throws SQLException {
         // Get the jar data to verify that it exists
         Jar jar = null;
@@ -270,6 +371,19 @@ public class Api extends JPanel {
         connection.close();
     }
 
+    /**
+     * Withdraws money from a jar.
+     * This method checks if the user has enough money in the jar to withdraw.
+     * If they do, it subtracts the amount from the jar,
+     * adds the amount to the user's account,
+     * creates a transaction for the operation,
+     * and saves the transaction in the user's account.
+     * If the user breaks the jar, it is deleted from the database.
+     * @param id the ID of the jar to withdraw from
+     * @param amount the amount of money to withdraw
+     * @param isBroken true if the jar is being broken, false otherwise
+     * @throws SQLException if there is an error during the database operation
+     */
     void withdrawFromJar(int id, double amount, boolean isBroken) throws SQLException {
         // Get the jar data to verify that it exists
         Jar jar = getJarData(id);
@@ -320,6 +434,17 @@ public class Api extends JPanel {
         connection.close();
     }
 
+    /**
+     * Fulfills a deposit request by transferring money from the user's account to the target's account.
+     * This method checks if the user has enough money to fulfill the request.
+     * If they do, it subtracts the amount from the user's account,
+     * adds the amount to the target's account,
+     * creates transactions for both the user and the target,
+     * saves the transactions in their respective accounts,
+     * and deletes the request from the database.
+     * @param id the ID of the deposit request to be fulfilled
+     * @throws SQLException if there is an error during the database operation
+     */
     void fulfillDepositRequest(int id) throws SQLException {
         // Get the data about the request
         DepositRequest request = getDepositRequestData(id);
@@ -379,6 +504,13 @@ public class Api extends JPanel {
         update();
     };
 
+    /**
+     * Deletes a deposit request from the database.
+     * This method removes the request from the database
+     * and updates the user's account by removing the request ID.
+     * @param id the ID of the deposit request to be deleted
+     * @throws SQLException if there is an error during the database operation
+     */
     void deleteDepositRequest(int id) throws SQLException {
         // Establish a connection
         connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
@@ -395,6 +527,19 @@ public class Api extends JPanel {
         connection.close();
     }
 
+    /**
+     * Sends money from the user's account to another user's account.
+     * This method checks if the user has enough money to send.
+     * If they do, it subtracts the amount from the user's account,
+     * adds the amount to the target's account,
+     * creates transactions for both the user and the target,
+     * saves the transactions in their respective accounts,
+     * and updates the user data.
+     * @param amount the amount of money to be sent
+     * @param cardNumber the card number of the target user
+     * @param name the name of the target user
+     * @throws SQLException if there is an error during the database operation
+     */
     void send(double amount, BigDecimal cardNumber, String name) throws SQLException{
         // Establish a connection
         connection = DriverManager.getConnection(DATABASE_URL, "postgres", dbpassword);
@@ -456,6 +601,12 @@ public class Api extends JPanel {
         connection.close();
     }
 
+    /**
+     * Updates the user data in the {@link UserSession}.
+     * This method retrieves the data of the current user from the database
+     * and stores it in the {@link UserSession}.
+     * @throws SQLException if there is an error during the database operation
+     */
     // Update data about the user
     void update() throws SQLException{
         // Establish a connection
@@ -470,6 +621,15 @@ public class Api extends JPanel {
         connection.close();
     }
 
+    /**
+     * Stores the user data in the {@link UserSession}.
+     * Gets the transaction IDs, deposit request IDs, and jar IDs from the {@link ResultSet},
+     * and uses them to get the data needed
+     * to create the corresponding objects.
+     * It then stores a new {@link User} object in the {@link UserSession}.
+     * @param resSet the {@link ResultSet} containing the user data
+     * @throws SQLException if there is an error during the database operation
+     */
     private void storeUser(ResultSet resSet) throws SQLException {
         // Check if there are no transactions/deposit requests/jars. If there are, get them from the database and store them
         BigDecimal[] transactionIds = {};

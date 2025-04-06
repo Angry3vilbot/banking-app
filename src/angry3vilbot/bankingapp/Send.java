@@ -1,3 +1,5 @@
+package angry3vilbot.bankingapp;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
@@ -12,29 +14,106 @@ import java.awt.event.ActionEvent;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 
+/**
+ * Send class is a {@link JPanel} that allows the user to send money to another person's account.
+ * It contains a title, radio buttons for selecting between new and recent entries,
+ * text fields for entering the recipient's name, card number, and amount to send,
+ * and buttons for submitting or canceling the transaction.
+ * <br><br>
+ * If the user clicks the send button, it will call the {@link Api#send(double, BigDecimal, String)} method
+ * with the entered data.
+ * If the user clicks the cancel button, it will revert the fields to their initial values
+ * and switch the card back to the {@link Main} panel.
+ */
 public class Send extends Api {
+    /**
+     * Label for the title of the panel.
+     */
     JLabel title;
+    /**
+     * {@link ButtonGroup} for the new/recent buttons.
+     */
     ButtonGroup newRecentGroup;
+    /**
+     * Container for the new/recent buttons.
+     */
     JPanel newRecentContainer;
+    /**
+     * Container that wraps the text fields and combo boxes containers to allow switching between the two.
+     */
     JPanel inputsContainer;
+    /**
+     * Container for the text fields.
+     */
     JPanel textFieldsContainer;
+    /**
+     * Container for the combo boxes.
+     */
     JPanel comboBoxContainer;
+    /**
+     * Button to switch to entering new payment info.
+     */
     JButton newBtn;
+    /**
+     * Button to switch to using recent entries.
+     */
     JButton recentBtn;
+    /**
+     * Label for the name field.
+     */
     JLabel nameL;
+    /**
+     * Label for the card number field.
+     */
     JLabel numberL;
+    /**
+     * Label for the amount field.
+     */
     JLabel amountL;
+    /**
+     * Label for the name combo box.
+     */
     JLabel nameLCombo;
+    /**
+     * Label for the card number combo box.
+     */
     JLabel numberLCombo;
+    /**
+     * Field for the name.
+     */
     JTextField name;
+    /**
+     * Field for the card number.
+     */
     JTextField number;
+    /**
+     * Field for the amount to be sent.
+     */
     JTextField amount;
+    /**
+     * ComboBox for the name.
+     */
     JComboBox<String> nameBox;
+    /**
+     * ComboBox for the card number.
+     */
     JComboBox<String> numberBox;
+    /**
+     * Button to submit the transaction.
+     */
     JButton submitBtn;
+    /**
+     * Button to cancel the transaction.
+     */
     JButton cancelBtn;
+    /**
+     * List of recent entries read from the file.
+     */
     List<String> recentEntriesList;
 
+    /**
+     * Constructs a Send object.
+     */
     Send() {
         readRecentEntries();
         GridBagLayout gbLayout = new GridBagLayout();
@@ -161,6 +240,11 @@ public class Send extends Api {
         this.add(submitBtn, gbc);
     }
 
+    /**
+     * Handles the selection of the "New" or "Recent" buttons.
+     * It switches the input fields between text fields and combo boxes.
+     * @param e the event that triggered the method
+     */
     private void selectionHandler(ActionEvent e) {
         if(e.getSource().equals(newBtn)) {
             newRecentGroup.setSelected(newBtn.getModel(), true);
@@ -177,6 +261,11 @@ public class Send extends Api {
         }
     }
 
+    /**
+     * Handles the selection logic of the combo boxes.
+     * It sets the selected index of the other {@link JComboBox} to be the same as the one that was used to make the selection.
+     * @param e the event that triggered the method
+     */
     private void comboBoxHandler(ActionEvent e) {
         // Sets the index of the other box to be the same as the box that was used to make the selection
         if(e.getSource().equals(nameBox)) {
@@ -187,6 +276,14 @@ public class Send extends Api {
         }
     }
 
+    /**
+     * Reads the recent entries from a file and stores them in a list.
+     * If the file does not exist, it initializes an empty list.
+     * This method is called when the class is instantiated.
+     * <br><br>
+     * It reads the entries from the file called "recentTransfers.txt".
+     * If the file does not exist, it initializes an empty list.
+     */
     private void readRecentEntries() {
         List<String> entries = new ArrayList<>();
         File file = new File("recentTransfers.txt");
@@ -206,6 +303,16 @@ public class Send extends Api {
         }
     }
 
+    /**
+     * Saves the payment information to a file.
+     * This method is called when the user clicks the send button.
+     * It writes the entries to a file called "recentTransfers.txt".
+     * If the file does not exist, it creates a new one.
+     * <br><br>
+     * It takes a {@link List} of entries as input and writes each entry to the file.
+     * Each entry is written on a new line.
+     * @param entries the list of entries to be saved
+     */
     private void savePaymentInfo(List<String> entries) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("recentTransfers.txt"))) {
             for (String pair : entries) {
@@ -218,6 +325,14 @@ public class Send extends Api {
         }
     }
 
+    /**
+     * Handles the submit button click event.
+     * <br><br>
+     * Validates the input fields and performs the send operation.
+     * If the input is valid, it calls the {@link Api#send(double, BigDecimal, String)} method
+     * with the entered data.
+     * @param e the event that triggered the method
+     */
     private void submitBtnHandler(ActionEvent e) {
         try {
             BigDecimal paymentInfoData;
@@ -311,6 +426,12 @@ public class Send extends Api {
         }
     }
 
+    /**
+     * Handles the cancel button click event.
+     * Reverts the input fields to their initial values
+     * and switches the card back to the {@link Main} panel.
+     * @param e the event that triggered the method
+     */
     private void cancelBtnHandler(ActionEvent e) {
         // Revert everything to initial values
         newRecentGroup.setSelected(newBtn.getModel(), true);

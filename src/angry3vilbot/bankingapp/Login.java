@@ -1,16 +1,48 @@
+package angry3vilbot.bankingapp;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 
+/**
+ * Login class is a {@link JPanel} that contains the login form for the application.
+ * It contains fields for the user to enter their card number and password,
+ * as well as buttons to submit the form or navigate to the sign-up screen.
+ * <br><br>
+ * The login button triggers the authentication process,
+ * and if successful, it navigates to the main screen of the application.
+ * The sign-up button navigates to the sign-up screen.
+ */
 public class Login extends Api{
+    /**
+     * Label for the card number field.
+     */
     JLabel loginLabel;
+    /**
+     * Label for the password field.
+     */
     JLabel passLabel;
+    /**
+     * Field for the user to enter their password.
+     */
     JPasswordField passField;
+    /**
+     * Field for the user to enter their card number.
+     */
     JTextField loginField;
+    /**
+     * Button to submit the login form.
+     */
     JButton submitBtn;
+    /**
+     * Button to navigate to the sign-up screen.
+     */
     JButton signUpBtn;
 
+    /**
+     * Constructs a Login object.
+     */
     Login() {
         GridBagLayout grid = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
@@ -56,6 +88,13 @@ public class Login extends Api{
         this.add(signUpBtn, gbc);
     }
 
+    /**
+     * Handles the action of the login button.
+     * It retrieves the card number and password from the input fields,
+     * authenticates the user, and navigates to the main screen if successful.
+     * If authentication fails, it shows an error message.
+     * @param e the event that triggered the action
+     */
     private void loginBtnHandler(ActionEvent e) {
         try {
             authenticate(loginField.getText(), passField.getPassword());
@@ -74,6 +113,11 @@ public class Login extends Api{
         }
     }
 
+    /**
+     * Handles the action of the sign-up button.
+     * It navigates to the sign-up screen.
+     * @param e the event that triggered the action
+     */
     private void signUpBtnHandler(ActionEvent e) {
         CardLayout layout = (CardLayout) getParent().getLayout();
         layout.show(getParent(), "signup");

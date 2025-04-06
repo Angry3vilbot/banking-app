@@ -1,19 +1,62 @@
+package angry3vilbot.bankingapp;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 
+/**
+ * CreateJar class is a {@link JPanel} that allows the user to create a new jar.
+ * It contains a title field, a goal field, and two buttons: create and cancel.
+ * <ul><li>The title field is required, while the goal field is optional.</li>
+ * <li>The title field must not be empty or only contain "For".</li>
+ * <li>The goal field must be a positive number or empty.</li></ul>
+ * If the user clicks the create button, it will call the {@link Api#createJar} method
+ * to create a new jar.
+ * If the user clicks the cancel button, it will revert the fields to their initial values
+ * and switch the card back to the {@link Jars} panel.
+ */
 public class CreateJar extends Api {
+    /**
+     * {@link GridBagLayout} object used for layout management.
+     */
     GridBagLayout gbLayout;
+    /**
+     * {@link GridBagConstraints} object used for layout management.
+     */
     GridBagConstraints gbc;
+    /**
+     * Label that serves as the title of the panel.
+     */
     JLabel title;
+    /**
+     * Label for the {@link #titleField} field.
+     */
     JLabel titleLabel;
+    /**
+     * Label for the {@link #goalField} field.
+     */
     JLabel goalLabel;
+    /**
+     * Field to enter the title of the jar.
+     */
     JTextField titleField;
+    /**
+     * Field to enter the goal amount for the jar.
+     */
     JTextField goalField;
+    /**
+     * Button to create a new jar.
+     */
     JButton createJarBtn;
+    /**
+     * Button to revert the fields to their initial values and switch the card back to the {@link Jars} panel.
+     */
     JButton cancelBtn;
 
+    /**
+     * Constructs a new CreateJar panel.
+     */
     CreateJar() {
         gbLayout = new GridBagLayout();
         gbc = new GridBagConstraints();
@@ -63,6 +106,13 @@ public class CreateJar extends Api {
         this.add(createJarBtn, gbc);
     }
 
+    /**
+     * Handles the action of creating a jar.
+     * It validates the input fields and calls the {@link Api#createJar} method.
+     * If the input is valid, it updates the user information and switches the card back to the {@link Jars} panel.
+     * If the input is invalid, it shows an error message.
+     * @param event The event that triggered the action
+     */
     private void createJarHandler(ActionEvent event) {
         try {
             String titleData = "";
@@ -114,6 +164,11 @@ public class CreateJar extends Api {
         }
     }
 
+    /**
+     * Handles the action of canceling the jar creation.
+     * It reverts the input fields to their initial values and switches the card back to the {@link Jars} panel.
+     * @param event The event that triggered the action
+     */
     private void cancelHandler(ActionEvent event) {
         // Revert everything to initial values
         titleField.setText("For ");

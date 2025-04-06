@@ -1,19 +1,56 @@
+package angry3vilbot.bankingapp;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 
+/**
+ * Jars class represents the Jars screen in the application.
+ * It displays the user's jars and allows them to create new jars, deposit to jars, and withdraw from jars.
+ */
 public class Jars extends JPanel {
+    /**
+     * Title label for the Jars screen.
+     */
     JLabel title;
+    /**
+     * {@link GridBagLayout} object used for layout management.
+     */
     GridBagLayout gbLayout;
+    /**
+     * {@link GridBagConstraints} object used for layout management.
+     */
     GridBagConstraints gbc;
+    /**
+     * {@link JScrollPane} Container that provides a scrollbar for the {@link #jars}.
+     */
     JScrollPane jarsContainer;
+    /**
+     * {@link JarDisplay} Container for the jars.
+     */
     JarDisplay jars;
+    /**
+     * Container for the buttons.
+     */
     JPanel buttonsContainer;
+    /**
+     * Button to create a new jar.
+     */
     JButton createJarBtn;
+    /**
+     * Button to deposit to a jar.
+     */
     JButton depositToJarBtn;
+    /**
+     * {@link Navigation} object for navigating between screens.
+     */
     Navigation navigation;
+
+    /**
+     * Constructs a Jars object.
+     */
     Jars() {
         gbLayout = new GridBagLayout();
         gbc = new GridBagConstraints();
@@ -23,6 +60,7 @@ public class Jars extends JPanel {
         navigation = new Navigation();
         jars = new JarDisplay();
         jarsContainer = new JScrollPane(jars, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        jarsContainer.setBorder(null);
         jarsContainer.setPreferredSize(new Dimension(300, 300));
         JScrollBar verticalScrollBar = jarsContainer.getVerticalScrollBar();
         verticalScrollBar.setUnitIncrement(16);
@@ -69,29 +107,86 @@ public class Jars extends JPanel {
         this.add(navigation, gbc);
     }
 
+    /**
+     * Handles the action event when the create jar button is clicked.
+     * This method switches the view to the create jar screen.
+     * @param event The action event triggered when the create jar button is clicked.
+     */
     private void createJarHandler(ActionEvent event) {
         CardLayout layout = (CardLayout) getParent().getLayout();
         layout.show(getParent(), "createJar");
     }
 
+    /**
+     * Handles the action event when the deposit to jar button is clicked.
+     * This method switches the view to the deposit to jar screen.
+     * @param event The action event triggered when the deposit to jar button is clicked.
+     */
     private void depositToJarHandler(ActionEvent event) {
         CardLayout layout = (CardLayout) getParent().getLayout();
         layout.show(getParent(), "depositJar");
     }
 
+    /**
+     * JarDisplay class represents the display of jars in the {@link Jars} screen.
+     * It contains the jar image, title, value, progress bar, and buttons for each jar.
+     * It also handles the actions for copying jar ID, depositing to jars, and withdrawing from jars.
+     * It creates a new {@link JPanel} for each jar and adds it to itself.
+     * The JarDisplay object is created in the {@link Jars} constructor and added to a {@link JScrollPane}.
+     */
     private class JarDisplay extends JPanel {
+        /**
+         * {@link User} object representing the current user.
+         */
         User currentUser;
+        /**
+         * {@link GridBagLayout} object used for layout management.
+         */
         GridBagLayout gbagLayout;
+        /**
+         * {@link GridBagConstraints} object used for layout management.
+         */
         GridBagConstraints gridBagConstraints;
+        /**
+         * {@link JLabel} for the jar's image.
+         */
         JLabel jarImage;
+        /**
+         * {@link JPanel} for the jar.
+         */
         JPanel jarPanel;
+        /**
+         * Label for the jar's title.
+         */
         JLabel jarTitle;
+        /**
+         * Label for the jar's value.
+         */
         JLabel jarValue;
+        /**
+         * {@link JProgressBar} for the jar's goal.
+         */
         JProgressBar jarGoalProgress;
+        /**
+         * Container for the buttons.
+         */
         JPanel buttonsContainer;
+        /**
+         * Button to copy the jar's ID.
+         */
         JButton copyBtn;
+        /**
+         * Button to deposit into the jar.
+         */
         JButton depositBtn;
+        /**
+         * Button to withdraw from the jar.
+         */
         JButton withdrawBtn;
+
+        /**
+         * Constructs a JarDisplay object.
+         */
         JarDisplay() {
             currentUser = UserSession.getInstance().getUser();
             gbagLayout = new GridBagLayout();
@@ -200,18 +295,35 @@ public class Jars extends JPanel {
             }
        }
 
+        /**
+         * Handles the action event when the copy ID button is clicked.
+         * This method copies the jar ID to the clipboard.
+         * @param event The action event triggered when the copy ID button is clicked.
+         */
         private void copyId(ActionEvent event) {
             int id = (int)((JButton)event.getSource()).getClientProperty("id");
             StringSelection selection = new StringSelection(id + "");
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(selection, null);
         }
+
+        /**
+         * Handles the action event when the deposit button is clicked.
+         * This method switches the view to the deposit jar screen.
+         * @param event The action event triggered when the deposit button is clicked.
+         */
         private void depositHandler(ActionEvent event) {
             DepositJar depositJar = (DepositJar) getParent().getParent().getParent().getParent().getComponent(8);
             depositJar.idField.setText(((JButton)event.getSource()).getClientProperty("id") + "");
             CardLayout layout = (CardLayout) getParent().getParent().getParent().getParent().getLayout();
             layout.show(getParent().getParent().getParent().getParent(), "depositJar");
         }
+
+        /**
+         * Handles the action event when the withdraw button is clicked.
+         * This method switches the view to the withdraw from jar screen.
+         * @param event The action event triggered when the withdraw button is clicked.
+         */
         private void withdrawHandler(ActionEvent event) {
             // WithdrawJar screen
             WithdrawJar withdrawJar = (WithdrawJar) getParent().getParent().getParent().getParent().getComponent(9);
@@ -227,6 +339,9 @@ public class Jars extends JPanel {
         }
     }
 
+    /**
+     * Updates the UI components with the current user's information.
+     */
     public void updateUI() {
         User user = UserSession.getInstance().getUser();
         // If logged in
@@ -235,8 +350,14 @@ public class Jars extends JPanel {
                 this.remove(jarsContainer);
             }
             jars = new JarDisplay();
-            jarsContainer = new JScrollPane(jars, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-            jarsContainer.setBorder(null);
+            // updateUI method is overridden to remove the border
+            jarsContainer = new JScrollPane(jars, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER){
+                @Override
+                public void updateUI() {
+                    super.updateUI();
+                    setBorder(null);
+                }
+            };
             jarsContainer.setPreferredSize(new Dimension(300, 500));
             JScrollBar verticalScrollBar = jarsContainer.getVerticalScrollBar();
             verticalScrollBar.setUnitIncrement(16);

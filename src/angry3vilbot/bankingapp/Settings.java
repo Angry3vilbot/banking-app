@@ -1,3 +1,5 @@
+package angry3vilbot.bankingapp;
+
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
@@ -7,16 +9,51 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 
+/**
+ * Settings class represents the settings panel of the application.
+ * It allows users to change the theme of the application and log out.
+ */
 public class Settings extends JPanel {
+    /**
+     * {@link GridBagLayout} object for layout management.
+     */
     GridBagLayout gbLayout;
+    /**
+     * {@link GridBagConstraints} object for layout management.
+     */
     GridBagConstraints gbc;
+    /**
+     * Panel for holding the options in the settings panel.
+     */
     JPanel options;
+    /**
+     * Label for the title of the settings panel.
+     */
     JLabel title;
+    /**
+     * Label for the theme selector.
+     */
     JLabel themeLabel;
+    /**
+     * {@link JComboBox} for selecting the theme of the application.
+     */
     JComboBox<String> themeSelector;
+    /**
+     * Button to log out of the application.
+     */
     JButton logOutBtn;
+    /**
+     * Navigation object for navigating between different panels.
+     */
     Navigation navigation;
+    /**
+     * Array of available themes for the application.
+     */
     String[] themes = {"Light", "Dark", "Darkula", "IntelliJ"};
+
+    /**
+     * Constructs a Settings object.
+     */
     Settings() {
         gbLayout = new GridBagLayout();
         this.setLayout(gbLayout);
@@ -77,6 +114,12 @@ public class Settings extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         this.add(navigation, gbc);
     }
+
+    /**
+     * Change the theme of the application based on the user's selection.
+     * This method is triggered when the user selects a theme from the combo box.
+     * @param event the event triggered when the user selects a theme from the combo box
+     */
     // Set the Look and Feel based on the user's selection
     private void changeTheme(ItemEvent event) {
         try {
@@ -101,6 +144,12 @@ public class Settings extends JPanel {
         }
     }
 
+    /**
+     * Handles the log out button click event.
+     * Logs out the user and clear the session.
+     * This method is triggered when the user clicks the log out button.
+     * @param event the event triggered when the user clicks the log out button
+     */
     private void logOutBtnHandler(ActionEvent event) {
         UserSession.getInstance().clearSession();
         CardLayout layout = (CardLayout) this.getParent().getLayout();

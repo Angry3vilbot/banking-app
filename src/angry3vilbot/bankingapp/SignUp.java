@@ -1,19 +1,53 @@
+package angry3vilbot.bankingapp;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+/**
+ * SignUp class is a {@link JPanel} that allows the user to sign up for an account.
+ * It contains a form with fields for the user's name, password, and password confirmation.
+ * It also contains buttons to submit the form and to switch to the login screen.
+ */
 public class SignUp extends Api {
+    /**
+     * Label for {@link #nameField}.
+     */
     JLabel nameLabel;
+    /**
+     * Label for {@link #passField}.
+     */
     JLabel passLabel;
+    /**
+     * Label for {@link #confirmField}.
+     */
     JLabel confirmLabel;
+    /**
+     * Field to enter the name.
+     */
     JTextField nameField;
+    /**
+     * Field to enter the password.
+     */
     JPasswordField passField;
+    /**
+     * Field to confirm the password.
+     */
     JPasswordField confirmField;
+    /**
+     * Button to submit the form.
+     */
     JButton submitBtn;
+    /**
+     * Button to switch to the login screen.
+     */
     JButton loginBtn;
 
+    /**
+     * Constructs a SignUp object.
+     */
     SignUp() {
         GridBagLayout grid = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
@@ -71,6 +105,16 @@ public class SignUp extends Api {
         this.add(loginBtn, gbc);
     }
 
+    /**
+     * Handles the action of the submit button.
+     * It checks <ul>
+     * <li>if the password and confirmation password match</li>
+     * <li>if the name is not empty</li>
+     * <li>if the password is less than 72 characters long.</li></ul>
+     * If all checks pass, it calls the {@link Api#signUp} method to create a new account.
+     * If any check fails, it shows an error message.
+     * @param event the event that triggered the method
+     */
     private void submitBtnHandler(ActionEvent event) {
         if (passField.getPassword().length == 0) {
             JOptionPane.showMessageDialog(null, "Error: Enter the password", "Error", JOptionPane.ERROR_MESSAGE);
@@ -107,6 +151,12 @@ public class SignUp extends Api {
             JOptionPane.showMessageDialog(null, "Error: " + exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    /**
+     * Handles the action of the login button.
+     * It switches the view to the login screen.
+     * @param e the event that triggered the method
+     */
     private void loginBtnHandler(ActionEvent e) {
         CardLayout layout = (CardLayout) getParent().getLayout();
         layout.show(getParent(), "login");

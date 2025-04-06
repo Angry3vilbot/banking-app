@@ -1,22 +1,70 @@
+package angry3vilbot.bankingapp;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 
+/**
+ * Deposit class is a {@link JPanel} that allows the user to deposit money into their account.
+ * It contains a title, radio buttons for payment method selection (Free Money or Card Number),
+ * text fields for payment info and deposit amount, and buttons for submitting or canceling the deposit.
+ * It validates the input and performs the deposit operation.
+ * If the user clicks the deposit button, it will call the {@link Api#deposit(Double)} or {@link Api#deposit(BigDecimal, Double)} method
+ * depending on the selected payment method.
+ * If the user clicks the cancel button, it will revert the fields to their initial values
+ * and switch the card back to the {@link Main} panel.
+ */
 public class Deposit extends Api {
+    /**
+     * Label for the title of the deposit panel.
+     */
     JLabel title;
+    /**
+     * Radio button for selecting the payment method as "Free Money".
+     */
     JRadioButton freeMoney;
+    /**
+     * Radio button for selecting the payment method as "Card Number".
+     */
     JRadioButton fromCard;
+    /**
+     * Container for the radio buttons.
+     */
     JPanel radioContainer;
+    /**
+     * Group of radio buttons for selecting the payment method.
+     */
     ButtonGroup paymentMethod;
+    /**
+     * Text field for the payment info.
+     */
     JTextField paymentInfo;
+    /**
+     * Text field for the deposit amount.
+     */
     JTextField depositAmount;
+    /**
+     * Label for the {@link #paymentInfo} field
+     */
     JLabel paymentInfoLabel;
+    /**
+     * Label for the {@link #depositAmount} field
+     */
     JLabel depositAmountLabel;
+    /**
+     * Button to submit the deposit request
+     */
     JButton submitBtn;
+    /**
+     * Button to revert the fields to their initial values
+     */
     JButton cancelBtn;
 
+    /**
+     * Constructs a new Deposit panel.
+     */
     Deposit() {
         GridBagLayout grid = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
@@ -87,6 +135,16 @@ public class Deposit extends Api {
         this.add(submitBtn, gbc);
     }
 
+    /**
+     * Handles the submit button click event.
+     * Validates the input fields and performs the deposit operation.
+     * If the input is valid, it calls the appropriate deposit method
+     * and updates the user information.
+     * If an error occurs, it shows an error message dialog.
+     * Finally, it reverts the fields to their initial values
+     * and switches the card back to the {@link Main} panel.
+     * @param e the event that triggered the method
+     */
     private void submitBtnHandler(ActionEvent e) {
         try {
             BigDecimal paymentInfoData = new BigDecimal(1);
@@ -149,6 +207,12 @@ public class Deposit extends Api {
         }
     }
 
+    /**
+     * Handles the cancel button click event.
+     * Reverts the fields to their initial values
+     * and switches the card back to the {@link Main} panel.
+     * @param e the event that triggered the method
+     */
     private void cancelBtnHandler(ActionEvent e) {
         // Revert everything to initial values
         paymentMethod.setSelected(freeMoney.getModel(), true);
