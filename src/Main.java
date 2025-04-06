@@ -201,13 +201,12 @@ public class Main extends Api {
                         }
                     }
                 }
-
+                // Delete the space and comma after the last jar
+                jarString.delete(jarString.length() - 2, jarString.length());
                 if(count == 1) {
                     JOptionPane.showMessageDialog(this, "Jar " + jarString + " has reached its goal", "Jar Goal Reached", JOptionPane.PLAIN_MESSAGE);
                 }
                 else if (count >= 2) {
-                    // Delete the space and comma after the last jar
-                    jarString.delete(jarString.length() - 2, jarString.length());
                     JOptionPane.showMessageDialog(this, "Jars " + jarString + " have reached their goals", "Jar Goal Reached", JOptionPane.PLAIN_MESSAGE);
                 }
 
