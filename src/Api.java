@@ -409,6 +409,15 @@ public class Api extends JPanel {
             connection.close();
             throw new SQLException("Not enough money on the user's balance");
         }
+        // Check if the user with the specified card number exists
+        pstat = connection.prepareStatement("SELECT * FROM \"user\" WHERE cardnumber=?");
+        pstat.setBigDecimal(1, cardNumber);
+        ResultSet target = pstat.executeQuery();
+        if(!target.next()) {
+            pstat.close();
+            connection.close();
+            throw new SQLException("User with card number " + cardNumber + " does not exist");
+        }
         // Subtract the amount from the user's balance
         pstat = connection.prepareStatement("UPDATE \"user\" SET balance=balance-? WHERE cardnumber=?");
         pstat.setDouble(1, amount);

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 public class Main extends Api {
     GridBagConstraints gbc;
     JLabel name;
+    JLabel cardnumber;
     JLabel balance;
     Navigation navigation;
     GridBagLayout gbLayout;
@@ -28,6 +29,29 @@ public class Main extends Api {
         if(currentUser != null) {
             name = new JLabel(currentUser.getName(), SwingConstants.LEFT);
             name.setFont(new Font("Dialog", Font.BOLD, 32));
+            cardnumber = new JLabel("Card Number: ****************" , SwingConstants.RIGHT);
+            cardnumber.setFont(new Font("Dialog", Font.BOLD, 32));
+            cardnumber.setPreferredSize(new Dimension(400, cardnumber.getPreferredSize().height));
+            cardnumber.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            cardnumber.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    // Show the card number if it is hidden
+                    if(cardnumber.getText().equals("Card Number: ****************")) {
+                        cardnumber.setText("Card Number: " + currentUser.getCardnumber());
+                    }
+                    else {
+                        cardnumber.setText("Card Number: ****************");
+                    }
+                    // Update the UI
+                    SwingUtilities.invokeLater(() -> {
+                        Window window = SwingUtilities.getWindowAncestor(Main.this);
+                        if(window != null) {
+                            window.revalidate();
+                            window.repaint();
+                        }
+                    });
+                }
+            });
             balance = new JLabel(currentUser.getBalance() + " €", SwingConstants.CENTER);
             balance.setFont(new Font("Dialog", Font.BOLD, 32));
             //Display a dialog box for each Deposit Request the user has
@@ -59,6 +83,12 @@ public class Main extends Api {
             gbc.weighty = 0;
             gbc.anchor = GridBagConstraints.FIRST_LINE_START;
             this.add(name, gbc);
+
+            // Card Number
+            gbc.gridx = 0;
+            gbc.gridwidth = 2;
+            gbc.anchor = GridBagConstraints.FIRST_LINE_END;
+            this.add(cardnumber, gbc);
 
             // Balance
             gbc.gridx = 0;
@@ -97,7 +127,7 @@ public class Main extends Api {
         gbc.weighty = 0;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.LINE_END;
-        gbc.insets = new Insets(0, 0, 0, 50);
+        gbc.insets = new Insets(0, 0, 0, 10);
         this.add(deposit, gbc);
 
         // Send button
@@ -105,7 +135,7 @@ public class Main extends Api {
         gbc.gridy = 2;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.LINE_START;
-        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.insets = new Insets(0, 10, 0, 0);
         this.add(send, gbc);
 
         // Navigation
@@ -135,6 +165,29 @@ public class Main extends Api {
 
             name = new JLabel(currentUser.getName(), SwingConstants.LEFT);
             name.setFont(new Font("Dialog", Font.BOLD, 32));
+            cardnumber = new JLabel("Card Number: ****************" , SwingConstants.RIGHT);
+            cardnumber.setFont(new Font("Dialog", Font.BOLD, 32));
+            cardnumber.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            cardnumber.setPreferredSize(new Dimension(400, cardnumber.getPreferredSize().height));
+            cardnumber.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    // Show the card number if it is hidden
+                    if(cardnumber.getText().equals("Card Number: ****************")) {
+                        cardnumber.setText("Card Number: " + currentUser.getCardnumber());
+                    }
+                    else {
+                        cardnumber.setText("Card Number: ****************");
+                    }
+                    // Update the UI
+                    SwingUtilities.invokeLater(() -> {
+                        Window window = SwingUtilities.getWindowAncestor(Main.this);
+                        if(window != null) {
+                            window.revalidate();
+                            window.repaint();
+                        }
+                    });
+                }
+            });
             balance = new JLabel(currentUser.getBalance() + " €", SwingConstants.CENTER);
             balance.setFont(new Font("Dialog", Font.BOLD, 32));
             transactions = new Transactions();
@@ -150,6 +203,11 @@ public class Main extends Api {
             gbc.weighty = 0;
             gbc.anchor = GridBagConstraints.FIRST_LINE_START;
             this.add(name, gbc);
+
+            gbc.gridx = 0;
+            gbc.gridwidth = 2;
+            gbc.anchor = GridBagConstraints.FIRST_LINE_END;
+            this.add(cardnumber, gbc);
 
             gbc.gridx = 0;
             gbc.gridy = 1;

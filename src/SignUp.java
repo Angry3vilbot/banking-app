@@ -88,7 +88,7 @@ public class SignUp extends Api {
             JOptionPane.showMessageDialog(null, "Error: You must enter a name", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if(nameField.getText().trim().matches("[A-z ]+")) {
+        if(!nameField.getText().trim().matches("[A-z ]+")) {
             JOptionPane.showMessageDialog(null, "Error: The name must only contain letters and spaces", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }

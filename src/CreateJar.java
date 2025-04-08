@@ -24,6 +24,8 @@ public class CreateJar extends Api {
         goalLabel = new JLabel("Goal (Optional)");
         titleField = new JTextField("For ");
         goalField = new JTextField();
+        titleField.setColumns(15);
+        goalField.setColumns(15);
         createJarBtn = new JButton("Create");
         cancelBtn = new JButton("Cancel");
         createJarBtn.addActionListener(this::createJarHandler);
@@ -32,11 +34,13 @@ public class CreateJar extends Api {
         // Title
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         this.add(title, gbc);
 
         // Title Label
         gbc.gridy = 1;
+        gbc.gridwidth = 1;
         gbc.insets = new Insets(0, 0, 10, 10);
         this.add(titleLabel, gbc);
 
