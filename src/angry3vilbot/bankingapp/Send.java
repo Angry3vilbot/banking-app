@@ -399,16 +399,13 @@ public class Send extends Api {
             // Read the file again to update the cache with the new entry
             readRecentEntries();
         } catch (SQLException exception) {
-            JOptionPane.showMessageDialog(null, exception.getMessage() + "\n" + exception.getCause());
-            for (StackTraceElement i : exception.getStackTrace()) {
-                System.out.println(i);
-            }
+            JOptionPane.showMessageDialog(null, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         } finally {
             // Update the user information
             try {
                 update();
             } catch (SQLException exception) {
-                JOptionPane.showMessageDialog(null, exception.getMessage() + "\n" + exception.getCause());
+                JOptionPane.showMessageDialog(null, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
             // Revert everything to initial values
             newRecentGroup.setSelected(newBtn.getModel(), true);
