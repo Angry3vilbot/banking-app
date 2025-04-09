@@ -251,8 +251,14 @@ public class Send extends Api {
             else {
                 // Check if the combo boxes are empty
                 if(numberBox.getSelectedIndex() != -1) {
-                    paymentInfoData = new BigDecimal(numberBox.getSelectedItem().toString());
-                    nameData = nameBox.getSelectedItem().toString();
+                    // Check if the user is sending to themselves
+                    if (!new BigDecimal(numberBox.getSelectedItem().toString()).equals(UserSession.getInstance().getUser().getCardnumber())) {
+                        paymentInfoData = new BigDecimal(numberBox.getSelectedItem().toString());
+                        nameData = nameBox.getSelectedItem().toString();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error: You can't send money to yourself", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
                 }
                 else {
                     JOptionPane.showMessageDialog(null, "Error: You must select a card number/name to send the money to", "Error", JOptionPane.ERROR_MESSAGE);
