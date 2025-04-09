@@ -233,6 +233,7 @@ public class Main extends Api {
                 if(result == JOptionPane.YES_OPTION) {
                     try{
                         fulfillDepositRequest(request.getId());
+                        updateUI();
                     } catch (SQLException exception) {
                         JOptionPane.showMessageDialog(this, "Error fulfilling request: " + exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
