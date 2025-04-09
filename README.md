@@ -6,7 +6,7 @@ To run the application, you need to have Java and PostgreSQL installed on your m
 2. Import the database dump into your PostgreSQL server.
 3. Run the JAR file using the command:
    ```bash
-   java "-Ddb.password=PASSWORD -Ddb.url=jdbc:postgresql://HOSTNAME:PORT/DATABASE" -jar banking-app.jar
+   java "-Ddb.password=PASSWORD" "-Ddb.url=jdbc:postgresql://HOSTNAME:PORT/DATABASE" -jar banking-app.jar
    ```
 Where:
 - `PASSWORD` is the password for the PostgreSQL user.
