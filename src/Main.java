@@ -31,7 +31,6 @@ public class Main extends Api {
             name.setFont(new Font("Dialog", Font.BOLD, 32));
             cardnumber = new JLabel("Card Number: ****************" , SwingConstants.RIGHT);
             cardnumber.setFont(new Font("Dialog", Font.BOLD, 32));
-            cardnumber.setPreferredSize(new Dimension(400, cardnumber.getPreferredSize().height));
             cardnumber.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             cardnumber.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -162,13 +161,15 @@ public class Main extends Api {
             if(transactionsScroll != null) {
                 this.remove(transactionsScroll);
             }
+            if(cardnumber != null) {
+                this.remove(cardnumber);
+            }
 
             name = new JLabel(currentUser.getName(), SwingConstants.LEFT);
             name.setFont(new Font("Dialog", Font.BOLD, 32));
             cardnumber = new JLabel("Card Number: ****************" , SwingConstants.RIGHT);
             cardnumber.setFont(new Font("Dialog", Font.BOLD, 32));
             cardnumber.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            cardnumber.setPreferredSize(new Dimension(400, cardnumber.getPreferredSize().height));
             cardnumber.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
                     // Show the card number if it is hidden
@@ -260,7 +261,9 @@ public class Main extends Api {
                     }
                 }
                 // Delete the space and comma after the last jar
-                jarString.delete(jarString.length() - 2, jarString.length());
+                if(count != 0) {
+                    jarString.delete(jarString.length() - 2, jarString.length());
+                }
                 if(count == 1) {
                     JOptionPane.showMessageDialog(this, "Jar " + jarString + " has reached its goal", "Jar Goal Reached", JOptionPane.PLAIN_MESSAGE);
                 }
